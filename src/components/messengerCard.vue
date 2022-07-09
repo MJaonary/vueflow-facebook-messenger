@@ -1,10 +1,8 @@
 <script setup>
-import { ref, computed, onMounted } from "vue";
-import { Handle, Position } from "@braks/vue-flow";
+import { ref, computed } from "vue";
+import { Handle, Position, useVueFlow } from "@braks/vue-flow";
 
-// Importing Externals Methods
 import getId from "../utils/radomId";
-////////////////////////////////////////////.
 
 // Usage of Store Pinia
 import { useStore } from "../stores/main.js";
@@ -12,7 +10,7 @@ const store = useStore();
 
 // Computed Values from Store.
 let localStates = computed(() => {
-  return store.getMessageById(props.mid);
+  return store.messages.find((element) => element.id == props.mid);
 });
 
 let Items = computed(() => {
@@ -20,19 +18,37 @@ let Items = computed(() => {
 });
 
 let localItems = computed(() => {
-  return store.getItemById(props.mid, props.id);
+  return Items.value.find((element) => element.id == props.id);
 });
 
 let localButtons = computed(() => {
-  return localItems.value?.buttons;
+  return localItems.value.buttons;
+});
+
+let localDefaultAction = computed(() => {
+  return localItems.value.default_action;
 });
 ////////////////////////////////////////////.
 
 // Value Update related methods all wrapped here
 const updateValues = (event, button_id) => {
   switch (event.target.id) {
+    case props.id + "title":
+      localItems.value.title = event.target.innerText || "Title";
+      break;
+
+    case props.id + "subtitle":
+      localItems.value.subtitle = event.target.innerText || "Subtitle";
+      break;
+
+    case props.id + "number":
+      localItems.value.number = event.target.innerText || "Card Comment";
+      break;
+
     case button_id + "button":
-      localButtons.value.find((element) => element.id == button_id).text =
+      localStates.value.items
+        .find((element) => element.id == props.id)
+        .buttons.find((element) => element.id == button_id).text =
         event.target.innerText || "Enter Text";
       break;
 
@@ -50,30 +66,39 @@ const deleteElement = (id) => {
 
 // Buttons related methods.
 const deleteButton = (id) => {
-  localItems.value.buttons = localButtons.value.filter(
-    (element) => element.id != id
-  );
+  localStates.value.items.find((element) => element.id == props.id).buttons =
+    localButtons.value.filter((element) => element.id != id);
 };
 
 const insertButton = () => {
-  localButtons.value.push({
+  localStates.value.items
+    .find((element) => element.id == props.id)
+    .buttons.push({
       id: getId(),
       text: `New Button ${localButtons.value.length + 1}`,
     });
 };
 ////////////////////////////////////////////.
 
-// Renderless resizable textarea
-const textarea = ref(null); // Access the textarea by his ref.
-
-const resizeTextarea = (event) => {
-  event.target.style.height = "auto";
-  event.target.style.height = event.target.scrollHeight + 4 + "px";
+// Default Action related methods.
+// Very similar to button but one element only
+// And not editable.
+const insertDefaultAction = () => {
+  localStates.value.items
+    .find((element) => element.id == props.id)
+    .default_action.push({
+      id: getId(),
+      text: `Default Action`,
+    });
 };
 
-onMounted(() => {
-  textarea.value.style.height = textarea.value.scrollHeight + 4 + "px";
-});
+const deleteDefaultAction = (id) => {
+  localStates.value.items.find(
+    (element) => element.id == props.id
+  ).default_action = localDefaultAction.value.filter(
+    (element) => element.id != id
+  );
+};
 ////////////////////////////////////////////.
 
 // Local Variables and props related things.
@@ -82,17 +107,33 @@ const props = defineProps({
   mid: String,
   id: String,
 });
+
+// Default image value :
+const default_image_src_value =
+  "https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png";
 ////////////////////////////////////////////.
 </script>
 
 <template>
+  <!-- Card Header, used as comment -->
+  <div
+    class="number"
+    contenteditable="true"
+    :id="id + 'number'"
+    @input="updateValues"
+  >
+    {{ localItems.number }}
+  </div>
+  <!-- Card Header, used as comment -->
+
+  <!-- Card template, Simple And Usable -->
   <div
     class="messenger-container"
     @mouseenter="transparent = false"
     @mouseleave="transparent = true"
     data-toggle="tooltip"
     data-placement="left"
-    title="Messenger Text and Buttons"
+    title="Messenger Carousel"
   >
     <!-- Handle for registering comments -->
     <Handle
@@ -104,15 +145,53 @@ const props = defineProps({
     />
     <!-- Handle for registering comments -->
 
-    <textarea
-      class="bubble"
-      ref="textarea"
-      :class="{ 'with-buttons': localButtons.length > 0 }"
-      :id="id + 'message-text'"
-      v-model="localItems.text"
-      @input="resizeTextarea"
+    <!-- Handle for registering comments -->
+    <Handle
+      :id="id + 'right'"
+      class="handle"
+      type="input"
+      :position="Position.Right"
+      style="top: 10%; left: 98% !important"
+    />
+    <!-- Handle for registering comments -->
+    
+    <!-- Adding image viewer -->
+    <img
+      :src="localItems.image_url || default_image_src_value"
+      style="width: 100%; height: 9rem; object-fit: contain"
+    />
+    <input
+      type="text"
+      :id="id + 'image_url'"
+      class="image_source_input"
+      v-model="localItems.image_url"
+      placeholder="Enter Image Source here"
+    />
+    <!-- Adding image viewer -->
+
+    <!-- Title Template -->
+    <div
+      type="text"
+      class="content"
+      :id="id + 'title'"
+      contenteditable
+      @input="updateValues"
     >
-    </textarea>
+      {{ localItems.title }}
+    </div>
+    <!-- Title Template -->
+
+    <!-- Subtitle Template -->
+    <div
+      type="text"
+      class="content"
+      :id="id + 'subtitle'"
+      contenteditable="true"
+      @input="updateValues"
+    >
+      {{ localItems.subtitle }}
+    </div>
+    <!-- Subtitle Template -->
 
     <!-- Button Poped to request delete element -->
     <div
@@ -135,6 +214,52 @@ const props = defineProps({
       </svg>
     </div>
     <!-- Button Poped to request delete element -->
+
+    <!-- Default Action template : Insert and render -->
+    <!-- Default Action render from localDefaultAction -->
+    <div
+      v-for="button in localDefaultAction"
+      class="button"
+      style="position: relative"
+    >
+      <div>
+        {{ button.text }}
+      </div>
+      <Handle
+        :id="button.id + 'right'"
+        class="handle"
+        type="input"
+        :position="Position.Right"
+        style=" top: 1.4rem; left: 100% !important"
+      />
+      <div
+        class="button-container"
+        @click="deleteDefaultAction(button.id)"
+        style="position: absolute; right: 0"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="16"
+          height="16"
+          fill="currentColor"
+          class="bi bi-trash3"
+          viewBox="0 0 16 16"
+        >
+          <path
+            d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5ZM11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H2.506a.58.58 0 0 0-.01 0H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1h-.995a.59.59 0 0 0-.01 0H11Zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5h9.916Zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47ZM8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5Z"
+          />
+        </svg>
+      </div>
+    </div>
+    <!-- Default Action render from localButtons -->
+    <div
+      class="button"
+      @click="insertDefaultAction"
+      v-if="localDefaultAction.length < 1"
+    >
+      Insert Default Action
+    </div>
+    <!-- Default Action template : Insert and render -->
 
     <!-- Button template : Insert and render -->
     <!-- Button render from localButtons -->
@@ -159,7 +284,7 @@ const props = defineProps({
         class="handle"
         type="input"
         :position="Position.Right"
-        style="top: 1.4rem; left: 100% !important"
+        style=" top: 1.4rem; left: 100% !important"
       />
       <div
         class="button-container"
@@ -181,11 +306,20 @@ const props = defineProps({
       </div>
     </div>
     <!-- Button render from localButtons -->
-    <div class="button" @click="insertButton" v-if="localButtons.length < 3">
+    <div
+      v-if="localButtons.length < 3"
+      class="button"
+      @click="
+        (event) => {
+          insertButton();
+        }
+      "
+    >
       Insert Button
     </div>
     <!-- Button template : Insert and render -->
   </div>
+  <!-- Card template, Simple And Usable -->
 </template>
 
 <style scoped>
@@ -193,6 +327,17 @@ const props = defineProps({
   outline: none;
 }
 
+.image_source_input {
+  width: 90%;
+  margin-top: 0.25rem;
+  overflow: hidden;
+  text-align: center;
+  border-radius: 1rem;
+}
+
+.number {
+  border-top: 3px #eee dashed;
+}
 .handle {
   background-color: white;
   width: 1rem;
@@ -217,7 +362,7 @@ const props = defineProps({
   border: 2px solid;
   border-radius: 1rem;
   padding-bottom: 0.5rem;
-  border: rgb(67, 206, 12) solid;
+  border: rgb(8, 210, 236) solid;
   margin-bottom: 1rem;
 }
 
@@ -252,26 +397,14 @@ const props = defineProps({
   background-color: #eee;
 }
 
-.bubble {
-  width: 100%;
-  height: auto;
-  white-space: normal;
-  height: auto;
-  background-color: #e5e5e5;
-  border: 1px solid #e5e5e5;
-  color: rgba(0, 0, 0, 1);
-  padding: 6px 12px;
-  box-sizing: border-box;
-  overflow: hidden !important;
-  overflow-wrap: break-word;
-  display: inline-block;
-  border-radius: 1em;
+.content {
+  width: 90%;
+  height: fit-content;
+  border-radius: 1rem;
+  margin-top: 0.2rem;
+  padding: 0.5rem;
   text-align: left;
-}
-
-.bubble.with-buttons {
-  border-bottom-left-radius: 0;
-  border-bottom-right-radius: 0;
-  margin-bottom: 0;
+  border: 2px solid;
+  display: inline-block;
 }
 </style>

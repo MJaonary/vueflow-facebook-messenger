@@ -2,15 +2,10 @@
 import { ref, computed } from "vue";
 
 import { Handle, Position, useVueFlow } from "@braks/vue-flow";
-import VueResizable from "vue-resizable";
 
 // Usage of Store Pinia
 import { useStore } from "../stores/main.js";
 const store = useStore();
-
-// Default image value :
-const default_image_src_value =
-  "https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png";
 
 const { applyNodeChanges } = useVueFlow();
 
@@ -24,11 +19,6 @@ let localStates = computed(() => {
 
 const transparent = ref(true);
 
-const resize = (event) => {
-  localStates.value.width = event.width + "px";
-  localStates.value.height = event.height + "px";
-};
-
 const updateValues = (e) => {
   localStates.value.label = e.target.innerText;
 };
@@ -40,14 +30,6 @@ const deleteElement = (event, id) => {
     return element.id != id;
   });
 };
-
-const changeColor = (event) => {
-  localStates.value.color = event.target.value;
-};
-
-let iframeURL = computed(()=>{
-  return localStates.src ? localStates.src+'\#view=fitH' : ''
-})
 </script>
 
 <template>
@@ -83,27 +65,14 @@ let iframeURL = computed(()=>{
     <div class="label" contenteditable="true" @input="updateValues">
       {{ localStates.label }}
     </div>
-    <vue-resizable
-      class="resizable-content"
-      :width="localStates.width"
-      :height="localStates.height"
-      :active="['b', 'r', 'rb']"
-      @resize:end="resize($event)"
+    <div
+      class="resize"
       :style="{ border: `3px ${localStates.color} solid` }"
-    >
-      <iframe :src="iframeURL" :title="id+'iframeView'"></iframe>
-      <input
-          class="iframe_source_input"
-          type="text"
-          v-model="localStates.src"
-          placeholder="Enter Document Source here"
-        />
-    </vue-resizable>
+    ></div>
     <input
       type="color"
-      :value="localStates.color"
+      v-model="localStates.color"
       class="container-color"
-      @input="changeColor"
       :style="{ backgroundColor: `${localStates.color}` }"
     />
     <Handle
@@ -131,25 +100,13 @@ let iframeURL = computed(()=>{
 </template>
 
 <style scoped>
-iframe {
-  width: 100%;
-  height: 100%;
-}
-.iframe_source_input {
-  width: 90%;
-  overflow: hidden;
-  text-align: center;
-  border-radius: 1rem;
-}
-
-iframe {
-  width: 100%;
-  height: 85%;
+[contenteditable]:focus {
+  outline: none;
 }
 .container-color {
   position: absolute;
   bottom: 5px;
-  right: 5px;
+  right: 44.5%;
   border: none;
   width: 1rem;
   height: 1rem;
@@ -208,15 +165,9 @@ iframe {
   transition: width, height 0.5s;
 }
 
-.resizable-content {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: 10px;
-  display: flex;
-  flex-direction: column;
-  width: 25em;
-  height: 14em;
+.resize {
+  width: 8rem;
+  height: 25px;
+  border-radius: 1rem;
 }
-
 </style>

@@ -1,10 +1,14 @@
+<script>
+import "@braks/vue-flow/dist/style.css";
+import "@braks/vue-flow/dist/theme-default.css";
+</script>
+
 <script setup>
 import {
   MiniMap,
   Background,
   BackgroundVariant,
   Controls,
-  MarkerType,
   VueFlow,
   useVueFlow,
 } from "@braks/vue-flow";
@@ -18,8 +22,12 @@ import facebookMessage from "./components/facebookMessage.vue";
 import messageEditorVue from "./components/messageEditor.vue";
 import messengerQuickReplyVue from "./components/messengerQuickReply.vue";
 import freeMindVue from "./components/freeMind.vue";
+import imageContainerVue from "./components/imageContainer.vue";
+import boxWithTitleVue from "./components/boxWithTitle.vue";
+import simpleTextVue from "./components/simpleText.vue";
 // ------------------------.
 import globalMenuVue from "./components/globalMenu.vue";
+import redirectorEdgeVue from "./components/redirectorEdge.vue";
 
 // Custom Connection line and Custom Edge
 import customConnectionLine from "./components/customConnectionLine.vue";
@@ -32,23 +40,8 @@ import getId from "./utils/radomId.js";
 import { useStore } from "./stores/main.js";
 const store = useStore();
 
-const {
-  toObject,
-  setNodes,
-  setEdges,
-  setTransform,
-  removeNodes,
-  nodes,
-  isNode,
-  getNodes,
-  onConnect,
-  edges,
-  addEdges,
-  addNodes,
-  viewport,
-  project,
-  onPaneReady,
-} = useVueFlow();
+const { setInteractive, onConnect, addEdges, addNodes, project, onPaneReady } =
+  useVueFlow();
 
 const elements = ref([]);
 
@@ -95,17 +88,30 @@ const onDrop = (event) => {
           type: "facebook-message",
           label: "Label",
           items: [
-            {
-              id: "1234",
-              type: "messengerTextVue",
-              text: "Entre le Message",
-              buttons: [
-                {
-                  id: "132132",
-                  text: "Bonjour",
-                },
-              ],
-            },
+            // {
+            //   id: getId(),
+            //   type: "messengerTextVue",
+            //   text: "Entre le Message",
+            //   buttons: [],
+            // },
+            // {
+            //   id: getId(),
+            //   type: "messengerCardVue",
+            //   number: 'Card Comment',
+            //   image_url: '',
+            //   title: "Title",
+            //   subtitle: "Subtitle",
+            //   default_action: [],
+            //   buttons: [],
+            // },
+            // {
+            //   id: getId(),
+            //   type: "messengerImageVue",
+            //   number: "Card Comment",
+            //   image_url: "",
+            //   link: "Facebook URL or Attachement ID",
+            //   buttons: [],
+            // },
           ],
         });
       });
@@ -117,7 +123,7 @@ const onDrop = (event) => {
           id: id,
           type: "starting-step",
           label: "Label",
-          content: "type",
+          content: "Type",
           items: [],
         });
       });
@@ -137,10 +143,70 @@ const onDrop = (event) => {
       });
       break;
 
+    case "redirector":
+      newNode.id = `redirector${id}`;
+      store.$patch((state) => {
+        state.messages.push({
+          id: newNode.id,
+          type: "redirector",
+          label: "Label",
+          width: "10em",
+          height: "10em",
+          color: "#000000",
+        });
+      });
+      break;
+
+    case "node-image":
+      newNode.id = `node-image${id}`;
+      store.$patch((state) => {
+        state.messages.push({
+          id: newNode.id,
+          type: "node-image",
+          label: "Label",
+          src: "",
+          width: "300px",
+          height: "120px",
+          color: "#000000",
+        });
+      });
+      break;
+
+    case "free-mind":
+      newNode.id = `free-mind${id}`;
+      store.$patch((state) => {
+        state.messages.push({
+          id: newNode.id,
+          type: "free-mind",
+          label: "Label",
+          src: "",
+          width: "25em",
+          height: "14em",
+          color: "#000000",
+        });
+      });
+      break;
+
+    case "box-with-title":
+      newNode.id = `box-with-title${id}`;
+      store.$patch((state) => {
+        state.messages.push({
+          id: newNode.id,
+          type: "box-with-title",
+          label: "Label",
+          title: "Title",
+          subtitle: "Subtitle",
+          color: "#000000",
+        });
+      });
+      break;
+
     default:
       break;
   }
 
+  // Implementation of a basic container catching
+  // TODO : update parent dynamicaly
   if (event.target.parentNode.id.substring(-1, 9) == "container") {
     console.log("in a container");
     newNode.parentNode = event.target.parentNode.id;
@@ -152,17 +218,17 @@ const onDrop = (event) => {
 
 // OnConnect node event, there is more work to do here.
 onConnect((params) => {
-  console.log(params);
-  (params.type = "custom"), (params.animated = true);
-  // params.style = { };
-  params.markerEnd = MarkerType; // Not working
+  // console.log(params);
+  (params.type = "custom"), (params.animated = false);
+  // params.style = {};
+  // params.markerEnd = MarkerType.ArrowClosed;
   addEdges([params]);
 });
+////////////////////////////////////////////.
 
 // Handling Clicked message to the message editor
 // OnClick : connect message clicked to the message editor.
 const onClick = (event) => {
-  console.log(event.node.id);
   if (event.node.type == "facebook-message") {
     if (messageToEdit.value == event.node.id) {
       messageToEdit.value = "";
@@ -172,8 +238,45 @@ const onClick = (event) => {
   }
   store.messageToEdit = messageToEdit.value;
 };
+////////////////////////////////////////////.
 
+// Implementation of a global key listener
+let onKeyUp = (event) => {
+  switch (event.key) {
+    case "AltGraph":
+      setInteractive(true);
+      break;
+
+    // Close the editor if Escape key is pressed
+    case "Escape":
+      messageToEdit.value = "";
+      break;
+
+    default:
+      break;
+  }
+};
+
+let onKeyDown = (event) => {
+  switch (event.key) {
+    case "AltGraph":
+      setInteractive(false);
+      break;
+
+    default:
+      break;
+  }
+};
+
+onMounted(() => {
+  window.addEventListener("keydown", onKeyDown);
+  window.addEventListener("keyup", onKeyUp);
+});
+////////////////////////////////////////////.
+
+// Local Variables and props related things.
 let messageToEdit = ref("");
+////////////////////////////////////////////.
 </script>
 
 <template>
@@ -189,14 +292,15 @@ let messageToEdit = ref("");
       <VueFlow
         v-model="elements"
         class="customnodeflow"
-        @dragover="onDragOver"
-        @drop="onDrop"
-        @nodeDoubleClick="onClick"
         :select-nodes-on-drag="true"
         :max-zoom="50"
         :min-zoom="0.05"
+        @dragover="onDragOver"
+        @drop="onDrop"
+        @nodeDoubleClick="onClick"
       >
         <Background :variant="BackgroundVariant.Lines" />
+
         <!-- Custom Connection from example -->
         <template #connection-line="props">
           <customConnectionLine v-bind="props" />
@@ -205,6 +309,9 @@ let messageToEdit = ref("");
         <!-- Custom Edge from example -->
         <template #edge-custom="props">
           <customEdgeVue v-bind="props" />
+        </template>
+        <template #node-redirector="props">
+          <redirectorEdgeVue v-bind="props" />
         </template>
 
         <!-- Imported Custom Templates -->
@@ -223,23 +330,28 @@ let messageToEdit = ref("");
         <template #node-free-mind="props">
           <freeMindVue :id="props.id" />
         </template>
+        <template #node-node-image="props">
+          <imageContainerVue :id="props.id" />
+        </template>
+        <template #node-box-with-title="props">
+          <boxWithTitleVue :id="props.id" />
+        </template>
+        <template #node-simple-text="props">
+          <simpleTextVue :id="props.id" />
+        </template>
+
         <!-- End of importing templates -->
         <Controls />
-        <MiniMap />
+        <MiniMap v-show="messageToEdit == ''" />
       </VueFlow>
     </div>
 
     <messageEditorVue
-      v-if="messageToEdit != ''"
+      v-show="messageToEdit != ''"
       :id="messageToEdit"
     ></messageEditorVue>
   </div>
 </template>
-
-<script>
-import "@braks/vue-flow/dist/style.css";
-import "@braks/vue-flow/dist/theme-default.css";
-</script>
 
 <style>
 html,
@@ -304,6 +416,10 @@ body,
 }
 
 .vue-flow__edges {
-  z-index: 10000;
+  z-index: 9999 !important;
+}
+
+.handle {
+  cursor: pointer !important;
 }
 </style>

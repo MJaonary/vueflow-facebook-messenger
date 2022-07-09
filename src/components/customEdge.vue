@@ -1,6 +1,6 @@
 <script setup>
 import { getBezierPath, getEdgeCenter, useVueFlow } from "@braks/vue-flow";
-import { computed } from "vue";
+import { computed, ref } from "vue";
 
 const props = defineProps({
   id: {
@@ -54,25 +54,70 @@ const onClick = (evt, id) => {
   evt.stopPropagation();
 };
 
-const edgePath = computed(() =>
-  getBezierPath({
+const getCustomStraightLine = (prop) => {
+  return `
+  M ${prop.sourceX - 7.5} ${prop.sourceY}
+  L ${prop.sourceX + 10} ${prop.sourceY}
+  L ${prop.sourceX + 10} ${prop.targetY - 130}
+  L ${prop.targetX - 30} ${prop.targetY - 130}
+  L ${prop.targetX - 30} ${prop.targetY}
+  L ${prop.targetX} ${prop.targetY}`;
+};
+
+const getStraightLine = (prop) => {
+  return `
+  M ${prop.sourceX} ${prop.sourceY - 7.5}
+  L ${prop.sourceX} ${prop.targetY}
+  L ${prop.targetX} ${prop.targetY}`;
+};
+
+const getCustomEdgePosition = (prop) => {
+  return [(prop.sourceX + prop.targetX) / 2, prop.targetY - 130, 0, 0];
+};
+
+const getEdgePosition = (prop) => {
+  return [prop.sourceX, (prop.sourceY + prop.targetY) / 2, 0, 0];
+}
+
+const edgePath = computed(() => {
+  const args = {
     sourceX: props.sourceX,
     sourceY: props.sourceY,
     sourcePosition: props.sourcePosition,
     targetX: props.targetX,
     targetY: props.targetY,
     targetPosition: props.targetPosition,
-  })
-);
+  };
+  if (props.targetX < props.sourceX) {
+    return getCustomStraightLine(args);
+  } else if (props.sourcePosition == "bottom") {
+    return getStraightLine(args);
+  } else {
+    return getBezierPath(args);
+  }
+});
 
-const center = computed(() =>
-  getEdgeCenter({
+const center = computed(() => {
+  const args = {
     sourceX: props.sourceX,
     sourceY: props.sourceY,
+    sourcePosition: props.sourcePosition,
     targetX: props.targetX,
     targetY: props.targetY,
-  })
-);
+    targetPosition: props.targetPosition,
+  };
+  if (props.targetX < props.sourceX) {
+    return getCustomEdgePosition(args);
+  } else if (props.sourcePosition == "bottom") {
+    return getEdgePosition(args);
+  } else {
+    return getEdgeCenter(args);
+  }
+});
+
+// Local Variables and props related things.
+let strokeColor = ref("#8492a6");
+////////////////////////////////////////////.
 </script>
 
 <script>
@@ -82,13 +127,28 @@ export default {
 </script>
 
 <template>
+  <defs>
+    <marker
+      id="triangle"
+      viewBox="0 0 10 10"
+      refX="1"
+      refY="5"
+      markerUnits="strokeWidth"
+      markerWidth="10"
+      markerHeight="10"
+      orient="auto"
+      :fill="strokeColor"
+    >
+      <path d="M 0 1.5 L 4 5 L 0 8.5 z" />
+    </marker>
+  </defs>
   <path
     fill="none"
-    stroke="#6F3381"
+    :stroke="strokeColor"
     :stroke-width="4"
     :d="edgePath"
-    :marker-end="markerEnd"
-    style="position: relative; z-index: 10000"
+    marker-end="url(#triangle)"
+    style="position: relative"
   />
   <foreignObject
     :width="foreignObjectSize"

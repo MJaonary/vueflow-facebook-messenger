@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "vite --host",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview --host"
   },
   "dependencies": {
     "@braks/vue-flow": "^0.4.27",
@@ -15,7 +15,8 @@
     "pinia": "^2.0.14",
     "vue": "^3.2.25",
     "vue-resizable": "^2.1.5",
-    "vue-simple-context-menu": "^4.0.4"
+    "vue-simple-context-menu": "^4.0.4",
+    "vue-textarea-autosize": "^1.1.1"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^2.3.3",

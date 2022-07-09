@@ -3,6 +3,7 @@ import { ref, computed } from "vue";
 import { Handle, Position, useVueFlow } from "@braks/vue-flow";
 
 import messageRendererVue from "./messageRenderer.vue";
+
 // Usage of Store Pinia
 import { useStore } from "../stores/main.js";
 const store = useStore();
@@ -50,17 +51,24 @@ const updateValues = (event) => {
 <template>
   <Handle
     :id="id + 'left'"
-    class="handle-left"
+    class="handle handle-left"
     type="input"
     :position="Position.Left"
     style="right: 0"
   />
   <Handle
     :id="id + 'right'"
-    class="handle-right"
+    class="handle handle-right"
     type="input"
     :position="Position.Right"
     style="right: 0"
+  />
+   <Handle
+    :id="id + 'bottom'"
+    class="handle handle-left"
+    type="input"
+    :position="Position.Bottom"
+    style="top: 100%; left: 50% !important;"
   />
   <div
     @mouseenter="transparent = false"
@@ -136,9 +144,7 @@ const updateValues = (event) => {
         </div>
       </div>
       <div class="content">
-        <div class="btn" @click="store.counter++">
-          <messageRendererVue :id="id"></messageRendererVue>
-        </div>
+        <messageRendererVue :id="id"></messageRendererVue>
       </div>
     </div>
   </div>
@@ -148,45 +154,21 @@ const updateValues = (event) => {
 [contenteditable]:focus {
   outline: none;
 }
-
+[contenteditable] {
+  cursor: text;
+}
 .label {
   position: absolute;
   left: 50%;
   font-size: 1rem;
-  transform: translate(-50%, -125%);
+  transform: translate(-50%, -100%);
   border: 2px dashed;
   padding: 5px 1em 0px 1em;
   border-radius: 1rem;
   clear: left;
   display: inline-block;
   width: 100%;
-  -webkit-appearance: textarea;
 }
-
-.add-type {
-  text-align: left;
-}
-
-.items {
-  border: 1px rgb(120, 120, 120) solid;
-  border-radius: 5px;
-  padding: 0.8rem;
-  color: rgb(120, 120, 120);
-  margin: 0.4rem;
-}
-
-.add-items {
-  border: 1px rgb(120, 120, 120) dashed;
-  border-radius: 5px;
-  padding: 0.8rem;
-  color: rgb(120, 120, 120);
-  margin: 0.4rem;
-}
-
-.add-items:active {
-  cursor: grabbing;
-}
-
 .content {
   background-color: #fff;
   padding: 0.5rem 1rem 0.5rem 1rem;
@@ -195,7 +177,6 @@ const updateValues = (event) => {
   border-bottom-right-radius: 1rem;
   cursor: pointer;
 }
-
 .handle-left {
   background-color: white;
   width: 1rem;
@@ -206,7 +187,6 @@ const updateValues = (event) => {
   left: -5px !important;
   z-index: 1002;
 }
-
 .handle-right {
   background-color: white;
   width: 0.95rem;
@@ -217,14 +197,12 @@ const updateValues = (event) => {
   right: -5px !important;
   z-index: 1002;
 }
-
 .handle-right:hover,
 .handle-left:hover {
   width: 1.3rem;
   height: 1.3rem;
   transition: width, height 0.5s;
 }
-
 .button-container {
   background-color: white;
   width: 2rem;
@@ -236,15 +214,12 @@ const updateValues = (event) => {
   opacity: 100%;
   transition: opacity 0.5s;
 }
-
 .transparent {
   opacity: 0%;
 }
-
 .button-container:hover {
   background-color: #eee;
 }
-
 .starting-step {
   border-top-left-radius: 1rem;
   border-top-right-radius: 1rem;
@@ -256,23 +231,19 @@ const updateValues = (event) => {
   padding-left: 0.5rem;
   padding-top: 0.3rem;
 }
-
 .starting-step {
   border-bottom: 1px solid #eee;
 }
-
 .main-container {
   max-width: calc(23rem + 6px);
   border: 3px solid transparent;
   border-radius: 1rem;
   box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
 }
-
 .main-container:hover {
   border: 3px #0084ff solid;
   border-radius: 1rem;
 }
-
 .on-edit {
   border: 3px red solid;
 }

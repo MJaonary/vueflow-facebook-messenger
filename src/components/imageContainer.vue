@@ -44,10 +44,6 @@ const deleteElement = (event, id) => {
 const changeColor = (event) => {
   localStates.value.color = event.target.value;
 };
-
-let iframeURL = computed(()=>{
-  return localStates.src ? localStates.src+'\#view=fitH' : ''
-})
 </script>
 
 <template>
@@ -91,13 +87,15 @@ let iframeURL = computed(()=>{
       @resize:end="resize($event)"
       :style="{ border: `3px ${localStates.color} solid` }"
     >
-      <iframe :src="iframeURL" :title="id+'iframeView'"></iframe>
-      <input
-          class="iframe_source_input"
+      <div style="width: 100%; height: 100%">
+        <img :src="localStates.src || default_image_src_value" />
+        <input
+          class="image_source_input"
           type="text"
           v-model="localStates.src"
-          placeholder="Enter Document Source here"
+          placeholder="Enter Image Source here"
         />
+      </div>
     </vue-resizable>
     <input
       type="color"
@@ -131,20 +129,17 @@ let iframeURL = computed(()=>{
 </template>
 
 <style scoped>
-iframe {
-  width: 100%;
-  height: 100%;
-}
-.iframe_source_input {
+.image_source_input {
   width: 90%;
+  margin-top: 0.25rem;
   overflow: hidden;
   text-align: center;
   border-radius: 1rem;
 }
 
-iframe {
+img {
   width: 100%;
-  height: 85%;
+  height: 100%;
 }
 .container-color {
   position: absolute;
@@ -209,14 +204,10 @@ iframe {
 }
 
 .resizable-content {
-  display: flex;
-  justify-content: center;
-  align-items: center;
   border-radius: 10px;
   display: flex;
   flex-direction: column;
   width: 25em;
   height: 14em;
 }
-
 </style>

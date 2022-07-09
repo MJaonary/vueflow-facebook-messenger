@@ -6,5 +6,13 @@ export const useStore = defineStore('main', {
             messageToEdit: '',
             messages: [],
         }
+    },
+    getters: {
+        getMessageById: (state) => {
+            return (messageId) => state.messages.find(element => element.id == messageId)
+        },
+        getItemById: (state) => {
+            return (messageId, itemId) => state.getMessageById(messageId).items.find(element => element.id == itemId)
+        }
     }
 })

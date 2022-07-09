@@ -17,7 +17,7 @@ const props = defineProps({
 });
 
 let localStates = computed(() => {
-  return store.messages.filter((element) => element.id == props.id)[0];
+  return store.messages.find((element) => element.id == props.id);
 });
 
 let localItems = computed(() => {
@@ -41,10 +41,10 @@ const deleteItemId = (id) => {
 };
 
 const addItem = () => {
-  localItems.value.push({ id: getId(), keyword: "Insert Keyword" });
+  localItems.value.push({ id: getId(), keyword: "Enter Keywords" });
 };
 
-const updateValues = (event) => {
+const updateValues = (event, id) => {
   switch (event.target.id) {
     case props.id + "type":
       localStates.value.content = event.target.innerText;
@@ -53,17 +53,17 @@ const updateValues = (event) => {
     case props.id + "label":
       localStates.value.label = event.target.innerText;
       break;
+
+    case id + "items":
+      localStates.value.items.find((element) => element.id == id).keyword =
+        event.target.innerText;
+      break;
   }
 };
 </script>
 
 <template>
-  <Handle
-    id="right"
-    class="handle"
-    type="input"
-    :position="Position.Right"
-  />
+  <Handle id="right" class="handle" type="input" :position="Position.Right" />
   <div
     @mouseenter="transparent = false"
     @mouseleave="transparent = true"
@@ -81,7 +81,11 @@ const updateValues = (event) => {
       class="button-container"
       :class="{ transparent: transparent }"
       style="margin-bottom: 0.5rem"
-      @click="(event) => deleteElement(event, id)"
+      @click="
+        ($event) => {
+          deleteElement($event, id);
+        }
+      "
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -135,19 +139,23 @@ const updateValues = (event) => {
           {{ localStates.content }}
         </div>
         <div
-          v-for="items in localItems"
+          v-for="item in localItems"
           class="items d-flex justify-content-center align-items-center"
           style="position: relative"
         >
           <div
             class="col-11"
-            :id="items.id"
+            :id="item.id + 'items'"
             contenteditable="true"
-            @input="updateValues"
+            @input="
+              ($event) => {
+                updateValues($event, item.id);
+              }
+            "
           >
-            {{ items.keyword }}
+            {{ item.keyword }}
           </div>
-          <div class="text-danger" @click="deleteItemId(items.id)">
+          <div class="text-danger" @click="deleteItemId(item.id)">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="16"
@@ -229,8 +237,9 @@ const updateValues = (event) => {
   top: 5.1rem;
 }
 .handle:hover {
-  transform: scale(1.5);
-  transform-origin: left bottom;
+  width: 1.3rem;
+  height: 1.3rem;
+  transition: width, height 0.5s;
 }
 .button-container {
   background-color: white;

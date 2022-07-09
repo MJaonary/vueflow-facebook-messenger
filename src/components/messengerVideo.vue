@@ -1,6 +1,6 @@
 <script setup>
-import { ref, computed, onMounted } from "vue";
-import { Handle, Position } from "@braks/vue-flow";
+import { ref, computed } from "vue";
+import { Handle, Position, useVueFlow } from "@braks/vue-flow";
 
 // Importing Externals Methods
 import getId from "../utils/radomId";
@@ -12,7 +12,7 @@ const store = useStore();
 
 // Computed Values from Store.
 let localStates = computed(() => {
-  return store.getMessageById(props.mid);
+  return store.messages.find((element) => element.id == props.mid);
 });
 
 let Items = computed(() => {
@@ -20,7 +20,7 @@ let Items = computed(() => {
 });
 
 let localItems = computed(() => {
-  return store.getItemById(props.mid, props.id);
+  return Items.value.find((element) => element.id == props.id);
 });
 
 let localButtons = computed(() => {
@@ -31,9 +31,20 @@ let localButtons = computed(() => {
 // Value Update related methods all wrapped here
 const updateValues = (event, button_id) => {
   switch (event.target.id) {
+    case props.id + "link":
+      localItems.value.link =
+        event.target.innerText || "Facebook URL or Attachement ID";
+      break;
+
     case button_id + "button":
-      localButtons.value.find((element) => element.id == button_id).text =
+      localStates.value.items
+        .find((element) => element.id == props.id)
+        .buttons.find((element) => element.id == button_id).text =
         event.target.innerText || "Enter Text";
+      break;
+
+    case props.id + "number":
+      localItems.value.number = event.target.innerText || "Card Comment";
       break;
 
     default:
@@ -50,30 +61,18 @@ const deleteElement = (id) => {
 
 // Buttons related methods.
 const deleteButton = (id) => {
-  localItems.value.buttons = localButtons.value.filter(
-    (element) => element.id != id
-  );
+  localStates.value.items.find((element) => element.id == props.id).buttons =
+    localButtons.value.filter((element) => element.id != id);
 };
 
 const insertButton = () => {
-  localButtons.value.push({
+  localStates.value.items
+    .find((element) => element.id == props.id)
+    .buttons.push({
       id: getId(),
       text: `New Button ${localButtons.value.length + 1}`,
     });
 };
-////////////////////////////////////////////.
-
-// Renderless resizable textarea
-const textarea = ref(null); // Access the textarea by his ref.
-
-const resizeTextarea = (event) => {
-  event.target.style.height = "auto";
-  event.target.style.height = event.target.scrollHeight + 4 + "px";
-};
-
-onMounted(() => {
-  textarea.value.style.height = textarea.value.scrollHeight + 4 + "px";
-});
 ////////////////////////////////////////////.
 
 // Local Variables and props related things.
@@ -82,17 +81,32 @@ const props = defineProps({
   mid: String,
   id: String,
 });
+
+// Default image value :
+const default_image_src_value =
+  "https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png";
 ////////////////////////////////////////////.
 </script>
 
 <template>
+  <!-- Card Header, used as comment -->
+  <div
+    class="number"
+    contenteditable="true"
+    :id="id + 'number'"
+    @input="updateValues"
+  >
+    {{ localItems.number }}
+  </div>
+  <!-- Card Header, used as comment -->
+
   <div
     class="messenger-container"
     @mouseenter="transparent = false"
     @mouseleave="transparent = true"
     data-toggle="tooltip"
     data-placement="left"
-    title="Messenger Text and Buttons"
+    title="Messenger Video"
   >
     <!-- Handle for registering comments -->
     <Handle
@@ -103,16 +117,30 @@ const props = defineProps({
       style="top: 10%; left: -3.5% !important"
     />
     <!-- Handle for registering comments -->
+    
+    <!-- Adding image viewer -->
+    <img
+      :src="localItems.image_url || default_image_src_value"
+      style="width: 100%; height: 9rem; object-fit: contain"
+    />
+    <input
+      type="text"
+      :id="id + 'image_url'"
+      class="image_source_input"
+      v-model="localItems.image_url"
+      placeholder="Enter Video Poster"
+    />
+    <!-- Adding image viewer -->
 
-    <textarea
-      class="bubble"
-      ref="textarea"
-      :class="{ 'with-buttons': localButtons.length > 0 }"
-      :id="id + 'message-text'"
-      v-model="localItems.text"
-      @input="resizeTextarea"
+    <div
+      type="text"
+      class="content"
+      :id="id + 'link'"
+      contenteditable
+      @input="updateValues"
     >
-    </textarea>
+      {{ localItems.link }}
+    </div>
 
     <!-- Button Poped to request delete element -->
     <div
@@ -181,7 +209,7 @@ const props = defineProps({
       </div>
     </div>
     <!-- Button render from localButtons -->
-    <div class="button" @click="insertButton" v-if="localButtons.length < 3">
+    <div class="button" @click="insertButton" v-if="localButtons.length < 1">
       Insert Button
     </div>
     <!-- Button template : Insert and render -->
@@ -191,6 +219,17 @@ const props = defineProps({
 <style scoped>
 [contenteditable]:focus {
   outline: none;
+}
+.image_source_input {
+  width: 90%;
+  margin-top: 0.25rem;
+  overflow: hidden;
+  text-align: center;
+  border-radius: 1rem;
+}
+
+.number {
+  border-top: 3px #eee dashed;
 }
 
 .handle {
@@ -217,7 +256,7 @@ const props = defineProps({
   border: 2px solid;
   border-radius: 1rem;
   padding-bottom: 0.5rem;
-  border: rgb(67, 206, 12) solid;
+  border: rgb(219, 68, 13) solid;
   margin-bottom: 1rem;
 }
 
@@ -252,26 +291,14 @@ const props = defineProps({
   background-color: #eee;
 }
 
-.bubble {
-  width: 100%;
-  height: auto;
-  white-space: normal;
-  height: auto;
-  background-color: #e5e5e5;
-  border: 1px solid #e5e5e5;
-  color: rgba(0, 0, 0, 1);
-  padding: 6px 12px;
-  box-sizing: border-box;
-  overflow: hidden !important;
-  overflow-wrap: break-word;
-  display: inline-block;
-  border-radius: 1em;
+.content {
+  width: 90%;
+  height: fit-content;
+  border-radius: 1rem;
+  margin-top: 0.2rem;
+  padding: 0.5rem;
   text-align: left;
-}
-
-.bubble.with-buttons {
-  border-bottom-left-radius: 0;
-  border-bottom-right-radius: 0;
-  margin-bottom: 0;
+  border: 2px solid;
+  display: inline-block;
 }
 </style>

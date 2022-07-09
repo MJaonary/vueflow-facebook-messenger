@@ -36,10 +36,6 @@ const deleteElement = (event, id) => {
     return element.id != id;
   });
 };
-
-const changeColor = (event) => {
-  localStates.value.color = event.target.value;
-};
 </script>
 
 <template>
@@ -86,27 +82,26 @@ const changeColor = (event) => {
     </vue-resizable>
     <input
       type="color"
-      :value="localStates.color"
+      v-model="localStates.color"
       class="container-color"
-      @input="changeColor"
       :style="{ backgroundColor: `${localStates.color}` }"
     />
     <Handle
-      id="a"
+      :id="id+'left'"
       class="handle"
       type="input"
       :position="Position.Left"
       style="top: 50%; left: -1.5%"
     />
     <Handle
-      id="b"
+      :id="id+'right'"
       class="handle"
       type="input"
       :position="Position.Right"
       style="top: 50%; right: -1.5%"
     />
     <Handle
-      id="d"
+      :id="id+'bottom'"
       class="handle"
       type="input"
       :position="Position.Bottom"
@@ -116,6 +111,9 @@ const changeColor = (event) => {
 </template>
 
 <style scoped>
+[contenteditable]:focus {
+  outline: none;
+}
 .container-color {
   position: absolute;
   bottom: 5px;
