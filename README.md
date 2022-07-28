@@ -1,7 +1,41 @@
-# Vue 3 + Vite
+# Facebook Messenger Flowchart
 
-This template should help get you started developing with Vue 3 in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+This app is an example of how to use [vue-flow](https://github.com/bcakmakoglu/vue-flow) with [Pinia](https://pinia.vuejs.org/) store, to create a flow with custom components, its main purpose is to create
+flowchart that helps to describe Facebook Messenger bot action. The flowchart and all of its data can be exported and imported to simple text file. The project is just at it's begining but many functionnality
+will be implemented.
 
-## Recommended IDE Setup
+## How It Works
 
-- [VS Code](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar)
+* **Nodes** can be dragged from the sidebar and dropped into the view.
+* Adding **Messenger Items** can be done using the messenger editor.
+* All functionnality of [vue-flow](https://github.com/bcakmakoglu/vue-flow) can be used on it.
+
+## Screenshoost
+
+![](./public/screenshoot.png)
+
+## Project Setup
+The project is a Vuejs app created using Vite.
+
+```sh
+npm install
+```
+
+### Compile and Hot-Reload for Development
+
+```sh
+npm run dev
+```
+
+### Compile and Minify for Production
+
+```sh
+npm run build
+```
+
+## 💝 Special Thanks
+
+This project is built with
+
+- [vue-flow](https://github.com/bcakmakoglu/vue-flow)
+  - Vue flow made possible building this tool by simplifing everything.
