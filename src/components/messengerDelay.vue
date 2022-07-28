@@ -2,17 +2,13 @@
 import { ref, computed } from "vue";
 import { Handle, Position, useVueFlow } from "@braks/vue-flow";
 
-// Importing Externals Methods
-import getId from "../utils/radomId";
-////////////////////////////////////////////.
-
 // Usage of Store Pinia
 import { useStore } from "../stores/main.js";
 const store = useStore();
 
 // Computed Values from Store.
 let localStates = computed(() => {
-  return store.messages.find((element) => element.id == props.mid);
+  return store.getMessageById(props.mid);
 });
 
 let Items = computed(() => {
@@ -20,26 +16,8 @@ let Items = computed(() => {
 });
 
 let localItems = computed(() => {
-  return Items.value.find((element) => element.id == props.id);
+  return store.getItemById(props.mid, props.id);
 });
-////////////////////////////////////////////.
-
-// Value Update related methods all wrapped here
-const updateValues = (event, button_id) => {
-  switch (event.target.id) {
-    case props.id + "link":
-      localItems.value.link =
-        event.target.innerText || "Facebook URL or Attachement ID";
-      break;
-
-    case props.id + "number":
-      localItems.value.number = event.target.innerText || "Card Comment";
-      break;
-
-    default:
-      break;
-  }
-};
 ////////////////////////////////////////////.
 
 // Elements related methods.
@@ -54,10 +32,6 @@ const props = defineProps({
   mid: String,
   id: String,
 });
-
-// Default image value :
-const default_image_src_value =
-  "https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png";
 ////////////////////////////////////////////.
 </script>
 
@@ -68,7 +42,7 @@ const default_image_src_value =
     @mouseleave="transparent = true"
     data-toggle="tooltip"
     data-placement="left"
-    title="Messenger File"
+    title="Messenger Delay"
   >
     <!-- Handle for registering comments -->
     <Handle
@@ -82,59 +56,59 @@ const default_image_src_value =
 
     <!-- Adding image viewer -->
     <svg
-            version="1.1"
-            id="Layer_1"
-            xmlns="http://www.w3.org/2000/svg"
-            xmlns:xlink="http://www.w3.org/1999/xlink"
-            x="0px"
-            y="0px"
-            viewBox="0 0 304.547 304.547"
-            style="enable-background: new 0 0 304.547 304.547"
-            xml:space="preserve"
-            class="delay"
-          >
-            <g>
-              <g>
-                <g>
-                  <path
-                    d="M279.924,69.575c-3.803-5.837-12.088-6.611-17.014-1.685c-3.644,3.644-4.301,9.344-1.483,13.661
+      version="1.1"
+      id="Layer_1"
+      xmlns="http://www.w3.org/2000/svg"
+      xmlns:xlink="http://www.w3.org/1999/xlink"
+      x="0px"
+      y="0px"
+      viewBox="0 0 304.547 304.547"
+      style="enable-background: new 0 0 304.547 304.547"
+      xml:space="preserve"
+      class="delay"
+    >
+      <g>
+        <g>
+          <g>
+            <path
+              d="M279.924,69.575c-3.803-5.837-12.088-6.611-17.014-1.685c-3.644,3.644-4.301,9.344-1.483,13.661
 				c14.949,22.931,22.958,50.763,20.717,80.607c-4.683,62.432-54.571,113.656-116.887,119.721
 				C83.267,289.862,14.68,221.274,22.668,139.29C28.59,78.473,77.578,29.194,138.342,22.773c31.37-3.316,60.69,4.736,84.659,20.357
 				c4.317,2.813,10.017,2.156,13.661-1.489c4.926-4.926,4.153-13.211-1.684-17.015C205.091,5.15,168.064-4.204,128.642,1.808
 				C63.789,11.703,11.76,63.52,1.833,128.368c-15.701,102.574,71.755,190.036,174.335,174.346
 				c64.853-9.916,116.675-61.945,126.571-126.798C308.756,136.494,299.396,99.461,279.924,69.575z"
-                  />
-                  <path
-                    d="M150.064,174.929v-0.004V92.458c0-6.081-4.932-11.018-11.018-11.018s-11.018,4.932-11.018,11.018v93.484
+            />
+            <path
+              d="M150.064,174.929v-0.004V92.458c0-6.081-4.932-11.018-11.018-11.018s-11.018,4.932-11.018,11.018v93.484
 				c0,6.081,4.932,11.018,11.018,11.018h93.484c6.086,0,11.013-4.932,11.013-11.018c0-6.081-4.932-11.013-11.013-11.013H150.064z"
-                  />
-                </g>
-              </g>
-            </g>
-            <g></g>
-            <g></g>
-            <g></g>
-            <g></g>
-            <g></g>
-            <g></g>
-            <g></g>
-            <g></g>
-            <g></g>
-            <g></g>
-            <g></g>
-            <g></g>
-            <g></g>
-            <g></g>
-            <g></g>
-          </svg>
+            />
+          </g>
+        </g>
+      </g>
+      <g></g>
+      <g></g>
+      <g></g>
+      <g></g>
+      <g></g>
+      <g></g>
+      <g></g>
+      <g></g>
+      <g></g>
+      <g></g>
+      <g></g>
+      <g></g>
+      <g></g>
+      <g></g>
+      <g></g>
+    </svg>
+    <!-- Adding image viewer -->
+
     <input
       type="text"
-      :id="id + 'delay_to_wait'"
       class="image_source_input"
       v-model="localItems.delay_to_wait"
       placeholder="Enter Delay in millisecond"
     />
-    <!-- Adding image viewer -->
 
     <!-- Button Poped to request delete element -->
     <div

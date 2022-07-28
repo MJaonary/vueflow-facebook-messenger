@@ -12,7 +12,7 @@ const store = useStore();
 
 // Computed Values from Store.
 let localStates = computed(() => {
-  return store.messages.find((element) => element.id == props.mid);
+  return store.getMessageById(props.mid);
 });
 
 let Items = computed(() => {
@@ -20,7 +20,7 @@ let Items = computed(() => {
 });
 
 let localItems = computed(() => {
-  return Items.value.find((element) => element.id == props.id);
+  return store.getItemById(props.mid, props.id);
 });
 
 let localButtons = computed(() => {
@@ -31,11 +31,6 @@ let localButtons = computed(() => {
 // Value Update related methods all wrapped here
 const updateValues = (event, button_id) => {
   switch (event.target.id) {
-    case props.id + "link":
-      localItems.value.link =
-        event.target.innerText || "Facebook URL or Attachement ID";
-      break;
-
     case button_id + "button":
       localStates.value.items
         .find((element) => element.id == props.id)
@@ -44,7 +39,7 @@ const updateValues = (event, button_id) => {
       break;
 
     case props.id + "number":
-      localItems.value.number = event.target.innerText || "Card Comment";
+      localItems.value.number = event.target.innerText || "Card Image Comment";
       break;
 
     default:
@@ -61,17 +56,16 @@ const deleteElement = (id) => {
 
 // Buttons related methods.
 const deleteButton = (id) => {
-  localStates.value.items.find((element) => element.id == props.id).buttons =
-    localButtons.value.filter((element) => element.id != id);
+  localItems.value.buttons = localButtons.value.filter(
+    (element) => element.id != id
+  );
 };
 
 const insertButton = () => {
-  localStates.value.items
-    .find((element) => element.id == props.id)
-    .buttons.push({
-      id: getId(),
-      text: `New Button ${localButtons.value.length + 1}`,
-    });
+  localButtons.value.push({
+    id: getId(),
+    text: `New Button ${localButtons.value.length + 1}`,
+  });
 };
 ////////////////////////////////////////////.
 
@@ -81,7 +75,6 @@ const props = defineProps({
   mid: String,
   id: String,
 });
-
 // Default image value :
 const default_image_src_value =
   "https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png";
@@ -117,7 +110,7 @@ const default_image_src_value =
       style="top: 10%; left: -3.5% !important"
     />
     <!-- Handle for registering comments -->
-    
+
     <!-- Adding image viewer -->
     <img
       :src="localItems.image_url || default_image_src_value"
@@ -125,22 +118,16 @@ const default_image_src_value =
     />
     <input
       type="text"
-      :id="id + 'image_url'"
-      class="image_source_input"
       v-model="localItems.image_url"
       placeholder="Enter Source here"
     />
     <!-- Adding image viewer -->
 
-    <div
+    <input
       type="text"
-      class="content"
-      :id="id + 'link'"
-      contenteditable
-      @input="updateValues"
-    >
-      {{ localItems.link }}
-    </div>
+      v-model="localItems.link"
+      placeholder="Facebook URL or Attachement ID"
+    />
 
     <!-- Button Poped to request delete element -->
     <div
@@ -220,7 +207,7 @@ const default_image_src_value =
 [contenteditable]:focus {
   outline: none;
 }
-.image_source_input {
+input {
   width: 90%;
   margin-top: 0.25rem;
   overflow: hidden;
@@ -288,16 +275,5 @@ const default_image_src_value =
 
 .button-container:hover {
   background-color: #eee;
-}
-
-.content {
-  width: 90%;
-  height: fit-content;
-  border-radius: 1rem;
-  margin-top: 0.2rem;
-  padding: 0.5rem;
-  text-align: left;
-  border: 2px solid;
-  display: inline-block;
 }
 </style>

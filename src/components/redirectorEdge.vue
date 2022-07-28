@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, watch } from "vue";
 
 import { Handle, Position, useVueFlow } from "@braks/vue-flow";
 
@@ -9,27 +9,43 @@ const store = useStore();
 
 const { applyNodeChanges } = useVueFlow();
 
-const props = defineProps({
-  id: String,
-});
-
+// Computed Values from Store.
 let localStates = computed(() => {
-  return store.messages.filter((element) => element.id == props.id)[0];
+  return store.getMessageById(props.id);
 });
+////////////////////////////////////////////.
 
-const transparent = ref(true);
-
+// Value Update related methods all wrapped here
 const updateValues = (e) => {
   localStates.value.label = e.target.innerText;
 };
+////////////////////////////////////////////.
 
+// Elements related methods.
 const deleteElement = (event, id) => {
   applyNodeChanges([{ type: "remove", id }]);
   event.stopPropagation();
-  store.messages = store.messages.filter((element) => {
+  store.layers.messages = store.layers.messages.filter((element) => {
     return element.id != id;
   });
 };
+////////////////////////////////////////////.
+
+// Watching Selected Manual event.
+watch(
+  () => props.selected,
+  (isSelected) => (selectedColor.value = isSelected)
+);
+////////////////////////////////////////////.
+
+// Local Variables and props related things.
+const transparent = ref(true);
+let selectedColor = ref(false);
+const props = defineProps({
+  id: String,
+  selected: Boolean,
+});
+////////////////////////////////////////////.
 </script>
 
 <template>
@@ -42,6 +58,7 @@ const deleteElement = (event, id) => {
     "
     @mouseenter="transparent = false"
     @mouseleave="transparent = true"
+    :style="{ border: selectedColor ? '3px red solid' : '3px transparent solid' }"
   >
     <div
       class="button-container"

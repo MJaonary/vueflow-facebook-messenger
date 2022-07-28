@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, onMounted } from "vue";
 import { Handle, Position, useVueFlow } from "@braks/vue-flow";
 
 // Importing Externals Methods
@@ -12,7 +12,7 @@ const store = useStore();
 
 // Computed Values from Store.
 let localStates = computed(() => {
-  return store.messages.find((element) => element.id == props.mid);
+  return store.getMessageById(props.mid);
 });
 
 let Items = computed(() => {
@@ -20,32 +20,27 @@ let Items = computed(() => {
 });
 
 let localItems = computed(() => {
-  return Items.value.find((element) => element.id == props.id);
+  return store.getItemById(props.mid, props.id);
 });
-////////////////////////////////////////////.
-
-// Value Update related methods all wrapped here
-const updateValues = (event, button_id) => {
-  switch (event.target.id) {
-    case props.id + "link":
-      localItems.value.link =
-        event.target.innerText || "Facebook URL or Attachement ID";
-      break;
-
-    case props.id + "number":
-      localItems.value.number = event.target.innerText || "Card Comment";
-      break;
-
-    default:
-      break;
-  }
-};
 ////////////////////////////////////////////.
 
 // Elements related methods.
 const deleteElement = (id) => {
   localStates.value.items = Items.value.filter((element) => element.id != id);
 };
+////////////////////////////////////////////.
+
+// Renderless resizable textarea
+const textarea = ref(null); // Access the textarea by his ref.
+
+const resizeTextarea = (event) => {
+  event.target.style.height = "auto";
+  event.target.style.height = event.target.scrollHeight + 4 + "px";
+};
+
+onMounted(() => {
+  textarea.value.style.height = textarea.value.scrollHeight + 4 + "px";
+});
 ////////////////////////////////////////////.
 
 // Local Variables and props related things.
@@ -80,10 +75,10 @@ const props = defineProps({
     <div class="input-header">Waiting for User Input</div>
     <textarea
       type="text"
-      :id="id + 'delay_to_wait'"
-      class="image_source_input"
+      ref="textarea"
       v-model="localItems.description"
       placeholder="Description"
+      @input="resizeTextarea"
     ></textarea>
     <!-- Adding image viewer -->
 
@@ -118,12 +113,13 @@ const props = defineProps({
 .input-header {
   font-weight: bold;
 }
-.image_source_input {
+textarea {
   width: 90%;
-  margin-top: 0.25rem;
+  margin-top: 0.2rem;
   overflow: hidden;
   text-align: center;
   border-radius: 1rem;
+  border: 3px rgba(113, 113, 113, 0.531) dashed;
 }
 .handle {
   background-color: white;

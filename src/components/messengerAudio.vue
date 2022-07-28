@@ -12,7 +12,7 @@ const store = useStore();
 
 // Computed Values from Store.
 let localStates = computed(() => {
-  return store.messages.find((element) => element.id == props.mid);
+  return store.getMessageById(props.mid);
 });
 
 let Items = computed(() => {
@@ -20,26 +20,8 @@ let Items = computed(() => {
 });
 
 let localItems = computed(() => {
-  return Items.value.find((element) => element.id == props.id);
+  return store.getItemById(props.mid, props.id);
 });
-////////////////////////////////////////////.
-
-// Value Update related methods all wrapped here
-const updateValues = (event, button_id) => {
-  switch (event.target.id) {
-    case props.id + "link":
-      localItems.value.link =
-        event.target.innerText || "Facebook URL or Attachement ID";
-      break;
-
-    case props.id + "number":
-      localItems.value.number = event.target.innerText || "Card Comment";
-      break;
-
-    default:
-      break;
-  }
-};
 ////////////////////////////////////////////.
 
 // Elements related methods.
@@ -98,22 +80,16 @@ const default_image_src_value =
     </svg>
     <input
       type="text"
-      :id="id + 'audio_url'"
-      class="image_source_input"
-      v-model="localItems.audio_url"
+      v-model="localItems.title"
       placeholder="Enter Audio Title"
     />
     <!-- Adding image viewer -->
 
-    <div
+    <input
       type="text"
-      class="content"
-      :id="id + 'link'"
-      contenteditable
-      @input="updateValues"
-    >
-      {{ localItems.link }}
-    </div>
+      v-model="localItems.link"
+      placeholder="Audio URL or Attachement ID"
+    />
 
     <!-- Button Poped to request delete element -->
     <div
@@ -148,7 +124,7 @@ const default_image_src_value =
   height: 2rem;
   margin-top: 0.4rem;
 }
-.image_source_input {
+input {
   width: 90%;
   margin-top: 0.25rem;
   overflow: hidden;
@@ -183,17 +159,6 @@ const default_image_src_value =
   margin-bottom: 1rem;
 }
 
-.button {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border: 2px dashed;
-  border-radius: 1rem;
-  width: 90%;
-  margin-top: 0.5rem;
-  height: 3rem;
-}
-
 .button-container {
   background-color: white;
   width: 2rem;
@@ -212,16 +177,5 @@ const default_image_src_value =
 
 .button-container:hover {
   background-color: #eee;
-}
-
-.content {
-  width: 90%;
-  height: fit-content;
-  border-radius: 1rem;
-  margin-top: 0.2rem;
-  padding: 0.5rem;
-  text-align: left;
-  border: 2px solid;
-  display: inline-block;
 }
 </style>

@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, onMounted } from "vue";
 import { Handle, Position, useVueFlow } from "@braks/vue-flow";
 
 import getId from "../utils/radomId";
@@ -10,7 +10,7 @@ const store = useStore();
 
 // Computed Values from Store.
 let localStates = computed(() => {
-  return store.messages.find((element) => element.id == props.mid);
+  return store.getMessageById(props.mid);
 });
 
 let Items = computed(() => {
@@ -18,11 +18,11 @@ let Items = computed(() => {
 });
 
 let localItems = computed(() => {
-  return Items.value.find((element) => element.id == props.id);
+  return store.getItemById(props.mid, props.id);
 });
 
 let localButtons = computed(() => {
-  return localItems.value.buttons;
+  return localItems.value?.buttons;
 });
 
 let localDefaultAction = computed(() => {
@@ -35,10 +35,6 @@ const updateValues = (event, button_id) => {
   switch (event.target.id) {
     case props.id + "title":
       localItems.value.title = event.target.innerText || "Title";
-      break;
-
-    case props.id + "subtitle":
-      localItems.value.subtitle = event.target.innerText || "Subtitle";
       break;
 
     case props.id + "number":
@@ -99,6 +95,19 @@ const deleteDefaultAction = (id) => {
     (element) => element.id != id
   );
 };
+////////////////////////////////////////////.
+
+// Renderless resizable textarea
+const textarea = ref(null); // Access the textarea by his ref.
+
+const resizeTextarea = (event) => {
+  event.target.style.height = "auto";
+  event.target.style.height = event.target.scrollHeight + 4 + "px";
+};
+
+onMounted(() => {
+  textarea.value.style.height = textarea.value.scrollHeight + 4 + "px";
+});
 ////////////////////////////////////////////.
 
 // Local Variables and props related things.
@@ -171,7 +180,6 @@ const default_image_src_value =
 
     <!-- Title Template -->
     <div
-      type="text"
       class="content"
       :id="id + 'title'"
       contenteditable
@@ -182,15 +190,13 @@ const default_image_src_value =
     <!-- Title Template -->
 
     <!-- Subtitle Template -->
-    <div
-      type="text"
-      class="content"
-      :id="id + 'subtitle'"
-      contenteditable="true"
-      @input="updateValues"
+    <textarea
+      ref="textarea"
+      v-model="localItems.subtitle"
+      @input="resizeTextarea"
+      placeholder="Subtitle"
     >
-      {{ localItems.subtitle }}
-    </div>
+    </textarea>
     <!-- Subtitle Template -->
 
     <!-- Button Poped to request delete element -->
@@ -397,7 +403,7 @@ const default_image_src_value =
   background-color: #eee;
 }
 
-.content {
+textarea, .content {
   width: 90%;
   height: fit-content;
   border-radius: 1rem;
@@ -406,5 +412,9 @@ const default_image_src_value =
   text-align: left;
   border: 2px solid;
   display: inline-block;
+}
+
+.content {
+  font-weight: bold;
 }
 </style>

@@ -2,17 +2,13 @@
 import { ref, computed } from "vue";
 import { Handle, Position, useVueFlow } from "@braks/vue-flow";
 
-// Importing Externals Methods
-import getId from "../utils/radomId";
-////////////////////////////////////////////.
-
 // Usage of Store Pinia
 import { useStore } from "../stores/main.js";
 const store = useStore();
 
 // Computed Values from Store.
 let localStates = computed(() => {
-  return store.messages.find((element) => element.id == props.mid);
+  return store.getMessageById(props.mid);
 });
 
 let Items = computed(() => {
@@ -20,26 +16,8 @@ let Items = computed(() => {
 });
 
 let localItems = computed(() => {
-  return Items.value.find((element) => element.id == props.id);
+  return store.getItemById(props.mid, props.id);
 });
-////////////////////////////////////////////.
-
-// Value Update related methods all wrapped here
-const updateValues = (event, button_id) => {
-  switch (event.target.id) {
-    case props.id + "link":
-      localItems.value.link =
-        event.target.innerText || "Facebook URL or Attachement ID";
-      break;
-
-    case props.id + "number":
-      localItems.value.number = event.target.innerText || "Card Comment";
-      break;
-
-    default:
-      break;
-  }
-};
 ////////////////////////////////////////////.
 
 // Elements related methods.
@@ -54,10 +32,6 @@ const props = defineProps({
   mid: String,
   id: String,
 });
-
-// Default image value :
-const default_image_src_value =
-  "https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png";
 ////////////////////////////////////////////.
 </script>
 
@@ -93,24 +67,19 @@ const default_image_src_value =
         d="M14 4.5V14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h5.5L14 4.5zm-3 0A1.5 1.5 0 0 1 9.5 3V1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V4.5h-2z"
       />
     </svg>
+    <!-- Adding image viewer -->
+
     <input
       type="text"
-      :id="id + 'file_url'"
-      class="image_source_input"
       v-model="localItems.file_url"
       placeholder="Enter File Title"
     />
-    <!-- Adding image viewer -->
 
-    <div
+    <input
       type="text"
-      class="content"
-      :id="id + 'link'"
-      contenteditable
-      @input="updateValues"
-    >
-      {{ localItems.link }}
-    </div>
+      v-model="localItems.link"
+      placeholder="File URL or Attachement ID"
+    />
 
     <!-- Button Poped to request delete element -->
     <div
@@ -145,7 +114,7 @@ const default_image_src_value =
   height: 2rem;
   margin-top: 0.4rem;
 }
-.image_source_input {
+input {
   width: 90%;
   margin-top: 0.25rem;
   overflow: hidden;
@@ -198,16 +167,5 @@ const default_image_src_value =
 
 .button-container:hover {
   background-color: #eee;
-}
-
-.content {
-  width: 90%;
-  height: fit-content;
-  border-radius: 1rem;
-  margin-top: 0.2rem;
-  padding: 0.5rem;
-  text-align: left;
-  border: 2px solid;
-  display: inline-block;
 }
 </style>

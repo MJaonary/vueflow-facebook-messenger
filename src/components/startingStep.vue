@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, watch } from "vue";
 import { Handle, Position, useVueFlow } from "@braks/vue-flow";
 
 // Simple Id Generator for basic Usage.
@@ -11,29 +11,27 @@ const store = useStore();
 
 const { applyNodeChanges } = useVueFlow();
 
-// Default id is passed from the component.
-const props = defineProps({
-  id: String,
-});
-
+// Computed Values from Store.
 let localStates = computed(() => {
-  return store.messages.find((element) => element.id == props.id);
+  return store.getMessageById(props.id);
 });
 
 let localItems = computed(() => {
   return localStates.value.items;
 });
+////////////////////////////////////////////.
 
-const transparent = ref(true);
-
+// Elements related methods.
 const deleteElement = (event, id) => {
   applyNodeChanges([{ type: "remove", id }]);
   event.stopPropagation();
-  store.messages = store.messages.filter((element) => {
+  store.layers.messages = store.layers.messages.filter((element) => {
     return element.id != id;
   });
 };
+////////////////////////////////////////////.
 
+// Items related methods.
 const deleteItemId = (id) => {
   localStates.value.items = localItems.value.filter((element) => {
     return element.id != id;
@@ -43,7 +41,9 @@ const deleteItemId = (id) => {
 const addItem = () => {
   localItems.value.push({ id: getId(), keyword: "Enter Keywords" });
 };
+////////////////////////////////////////////.
 
+// Value Update related methods all wrapped here
 const updateValues = (event, id) => {
   switch (event.target.id) {
     case props.id + "type":
@@ -60,10 +60,39 @@ const updateValues = (event, id) => {
       break;
   }
 };
+////////////////////////////////////////////.
+
+// Watching Selected Manual event.
+watch(
+  () => props.selected,
+  (isSelected) => (selectedColor.value = isSelected)
+);
+////////////////////////////////////////////.
+
+// Local Variables and props related things.
+const transparent = ref(true);
+let selectedColor = ref(false);
+const props = defineProps({
+  id: String,
+  selected: Boolean,
+});
+////////////////////////////////////////////.
 </script>
 
 <template>
-  <Handle id="right" class="handle" type="input" :position="Position.Right" />
+  <Handle
+    :id="id + 'right'"
+    type="input"
+    class="handle"
+    :position="Position.Right"
+  />
+  <Handle
+    :id="id + 'bottom'"
+    class="handle"
+    type="input"
+    :position="Position.Bottom"
+    style="top: 100%; left: 50% !important"
+  />
   <div
     @mouseenter="transparent = false"
     @mouseleave="transparent = true"
@@ -100,7 +129,10 @@ const updateValues = (event, id) => {
         />
       </svg>
     </div>
-    <div class="main-container">
+    <div
+      class="main-container"
+      :style="{ borderColor: selectedColor ? 'red' : '' }"
+    >
       <div class="starting-step">
         <div class="d-flex align-items-center">
           <div
@@ -155,6 +187,13 @@ const updateValues = (event, id) => {
           >
             {{ item.keyword }}
           </div>
+          <Handle
+            :id="item.id + 'right'"
+            class="handle"
+            type="input"
+            :position="Position.Right"
+            style="top: 1.4rem; left: 100% !important"
+          />
           <div class="text-danger" @click="deleteItemId(item.id)">
             <svg
               xmlns="http://www.w3.org/2000/svg"

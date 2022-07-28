@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, watch, onMounted } from "vue";
 import { Handle, Position, useVueFlow } from "@braks/vue-flow";
 
 // Usage of Store Pinia
@@ -10,17 +10,13 @@ const { applyNodeChanges } = useVueFlow();
 
 // Computed Values from Store.
 let localStates = computed(() => {
-  return store.messages.filter((element) => element.id == props.id)[0];
+  return store.getMessageById(props.id);
 });
 ////////////////////////////////////////////.
 
 // Value Update related methods all wrapped here
 const updateValues = (event) => {
   switch (event.target.id) {
-    case props.id + "title":
-      localStates.value.title = event.target.innerText || "Title";
-      break;
-
     case props.id + "label":
       localStates.value.label = event.target.innerText || "Label";
       break;
@@ -32,7 +28,7 @@ const updateValues = (event) => {
 const deleteElement = (event, id) => {
   applyNodeChanges([{ type: "remove", id }]);
   event.stopPropagation();
-  store.messages = store.messages.filter((element) => {
+  store.layers.messages = store.layers.messages.filter((element) => {
     return element.id != id;
   });
 };
@@ -51,11 +47,19 @@ onMounted(() => {
 });
 ////////////////////////////////////////////.
 
+// Watching Selected Manual event.
+watch(
+  () => props.selected,
+  (isSelected) => (selectedColor.value = isSelected)
+);
+////////////////////////////////////////////.
+
 // Local Variables and props related things.
 const transparent = ref(true);
-// Default id is passed from the component.
+let selectedColor = ref(false);
 const props = defineProps({
   id: String,
+  selected: Boolean,
 });
 ////////////////////////////////////////////.
 </script>
@@ -78,7 +82,6 @@ const props = defineProps({
     @mouseleave="transparent = true"
     class="d-flex flex-column align-items-center"
   >
-  
     <!-- Delete Button and color controls -->
     <div
       class="d-flex button-container"
@@ -109,7 +112,11 @@ const props = defineProps({
 
     <div
       class="main-container"
-      :style="{ border: `3px ${localStates.color} solid` }"
+      :style="{
+        border: selectedColor
+          ? '3px red solid'
+          : `3px ${localStates.color} solid`,
+      }"
     >
       <div class="starting-step">
         <!-- Label part -->
@@ -127,14 +134,12 @@ const props = defineProps({
       </div>
       <div class="content">
         <!-- Title part -->
-        <div
+        <input
           class="add-title"
-          :id="id + 'title'"
-          contenteditable="true"
           @input="updateValues"
-        >
-          {{ localStates.title }}
-        </div>
+          v-model="localStates.title"
+          placeholder="Title"
+        />
         <!-- Title part -->
 
         <!-- Subtitle part -->
@@ -143,6 +148,7 @@ const props = defineProps({
           ref="textarea"
           v-model="localStates.subtitle"
           @input="resizeTextarea"
+          placeholder="Subtitle"
         >
           {{ localStates.subtitle }}
         </textarea>

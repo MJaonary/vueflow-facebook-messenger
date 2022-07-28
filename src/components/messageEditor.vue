@@ -10,7 +10,7 @@ const store = useStore();
 
 // Computed Values from Store.
 let localStates = computed(() => {
-  return store.messages.filter((element) => element.id == props.id)[0];
+  return store.getMessageById(props.id);
 });
 ////////////////////////////////////////////.
 
@@ -31,9 +31,9 @@ const addElement = (type) => {
       element = {
         id: getId(),
         type: "messengerImageVue",
-        number: "Card Comment",
+        number: "Card Image Comment",
         image_url: "",
-        link: "Facebook URL or Attachement ID",
+        link: "",
         buttons: [],
       };
       break;
@@ -55,8 +55,8 @@ const addElement = (type) => {
       element = {
         id: getId(),
         type: "messengerAudioVue",
-        audio_url: "",
-        link: "Audio URL or Attachement ID",
+        title: "",
+        link: "",
       };
       break;
 
@@ -64,9 +64,9 @@ const addElement = (type) => {
       element = {
         id: getId(),
         type: "messengerVideoVue",
-        number: "Card Comment",
-        image_url: "",
-        link: "Facebook URL or Attachement ID",
+        number: "Card Image Comment",
+        video_url: "",
+        link: "",
         buttons: [],
       };
       break;
@@ -76,7 +76,7 @@ const addElement = (type) => {
         id: getId(),
         type: "messengerFileVue",
         file_url: "",
-        link: "File URL or Attachement ID",
+        link: "",
       };
       break;
 
@@ -107,7 +107,13 @@ const addElement = (type) => {
     default:
       break;
   }
-  localStates.value.items.push(element);
+
+  try {
+    localStates.value.items.push(element);
+  } catch {
+    messageToEdit = "";
+    console.log("There are no message to handle anymore.");
+  }
 };
 ////////////////////////////////////////////.
 

@@ -26,20 +26,25 @@ export default {
 <script setup>
 import { computed } from "vue";
 
+// Usage of Store Pinia
 import { useStore } from "../stores/main";
 const store = useStore();
 
-const props = defineProps({
-  id: String,
-});
-
-const localStates = computed(() => {
-  return store.messages.filter((element) => element.id == props.id)[0];
+// Computed Values from Store.
+let localStates = computed(() => {
+  return store.getMessageById(props.id);
 });
 
 const localItems = computed(() => {
   return localStates.value?.items;
 });
+////////////////////////////////////////////.
+
+// Local Variables and props related things.
+const props = defineProps({
+  id: String,
+});
+////////////////////////////////////////////.
 </script>
 
 <template>

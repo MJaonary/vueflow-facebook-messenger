@@ -12,7 +12,7 @@ const store = useStore();
 
 // Computed Values from Store.
 let localStates = computed(() => {
-  return store.messages.find((element) => element.id == props.mid);
+  return store.getMessageById(props.mid);
 });
 
 let Items = computed(() => {
@@ -20,7 +20,7 @@ let Items = computed(() => {
 });
 
 let localItems = computed(() => {
-  return Items.value.find((element) => element.id == props.id);
+  return store.getItemById(props.mid, props.id);
 });
 
 let localButtons = computed(() => {
@@ -31,11 +31,6 @@ let localButtons = computed(() => {
 // Value Update related methods all wrapped here
 const updateValues = (event, button_id) => {
   switch (event.target.id) {
-    case props.id + "link":
-      localItems.value.link =
-        event.target.innerText || "Facebook URL or Attachement ID";
-      break;
-
     case button_id + "button":
       localStates.value.items
         .find((element) => element.id == props.id)
@@ -44,7 +39,7 @@ const updateValues = (event, button_id) => {
       break;
 
     case props.id + "number":
-      localItems.value.number = event.target.innerText || "Card Comment";
+      localItems.value.number = event.target.innerText || "Card Video Comment";
       break;
 
     default:
@@ -61,17 +56,16 @@ const deleteElement = (id) => {
 
 // Buttons related methods.
 const deleteButton = (id) => {
-  localStates.value.items.find((element) => element.id == props.id).buttons =
-    localButtons.value.filter((element) => element.id != id);
+  localItems.value.buttons = localButtons.value.filter(
+    (element) => element.id != id
+  );
 };
 
 const insertButton = () => {
-  localStates.value.items
-    .find((element) => element.id == props.id)
-    .buttons.push({
-      id: getId(),
-      text: `New Button ${localButtons.value.length + 1}`,
-    });
+  localButtons.value.push({
+    id: getId(),
+    text: `New Button ${localButtons.value.length + 1}`,
+  });
 };
 ////////////////////////////////////////////.
 
@@ -81,6 +75,9 @@ const props = defineProps({
   mid: String,
   id: String,
 });
+// Default image value :
+const default_video_src_value =
+  "https://drive.google.com/uc?export=view&confirm=yTib&id=1g8uCFA1CDKMvVsPwb8V8ayk-3Mop3_Hu";
 
 // Default image value :
 const default_image_src_value =
@@ -117,30 +114,28 @@ const default_image_src_value =
       style="top: 10%; left: -3.5% !important"
     />
     <!-- Handle for registering comments -->
-    
+
     <!-- Adding image viewer -->
-    <img
-      :src="localItems.image_url || default_image_src_value"
-      style="width: 100%; height: 9rem; object-fit: contain"
+    <img :src="default_image_src_value" alt="" v-show="!localItems.video_url" />
+    <video
+      v-show="localItems.video_url"
+      :src="localItems.video_url"
+      muted
+      controls
     />
+    
     <input
       type="text"
-      :id="id + 'image_url'"
-      class="image_source_input"
-      v-model="localItems.image_url"
-      placeholder="Enter Video Poster"
+      v-model="localItems.video_url"
+      placeholder="Enter Source here"
     />
     <!-- Adding image viewer -->
 
-    <div
+    <input
       type="text"
-      class="content"
-      :id="id + 'link'"
-      contenteditable
-      @input="updateValues"
-    >
-      {{ localItems.link }}
-    </div>
+      v-model="localItems.link"
+      placeholder="Facebook URL or Attachement ID"
+    />
 
     <!-- Button Poped to request delete element -->
     <div
@@ -220,18 +215,23 @@ const default_image_src_value =
 [contenteditable]:focus {
   outline: none;
 }
-.image_source_input {
+input {
   width: 90%;
   margin-top: 0.25rem;
   overflow: hidden;
   text-align: center;
   border-radius: 1rem;
 }
-
+img, video {
+  border-radius: 1rem;
+  width: 94%;
+  height: 9rem;
+  object-fit: contain;
+  margin-top: 0.2rem;
+}
 .number {
   border-top: 3px #eee dashed;
 }
-
 .handle {
   background-color: white;
   width: 1rem;
@@ -256,7 +256,7 @@ const default_image_src_value =
   border: 2px solid;
   border-radius: 1rem;
   padding-bottom: 0.5rem;
-  border: rgb(219, 68, 13) solid;
+  border: rgb(219, 13, 219) solid;
   margin-bottom: 1rem;
 }
 
@@ -289,16 +289,5 @@ const default_image_src_value =
 
 .button-container:hover {
   background-color: #eee;
-}
-
-.content {
-  width: 90%;
-  height: fit-content;
-  border-radius: 1rem;
-  margin-top: 0.2rem;
-  padding: 0.5rem;
-  text-align: left;
-  border: 2px solid;
-  display: inline-block;
 }
 </style>

@@ -3,13 +3,16 @@ import { defineStore } from 'pinia'
 export const useStore = defineStore('main', {
     state: () => {
         return {
-            messageToEdit: '',
-            messages: [],
+            layers: {
+                messageToEdit: '',
+                elements: {},
+                messages: [],
+            }
         }
     },
     getters: {
         getMessageById: (state) => {
-            return (messageId) => state.messages.find(element => element.id == messageId)
+            return (messageId) => state.layers.messages.find(element => element.id == messageId)
         },
         getItemById: (state) => {
             return (messageId, itemId) => state.getMessageById(messageId).items.find(element => element.id == itemId)

@@ -1,6 +1,8 @@
 <script>
+// Importing vueflow specific stylesheet
 import "@braks/vue-flow/dist/style.css";
 import "@braks/vue-flow/dist/theme-default.css";
+////////////////////////////////////////////.
 </script>
 
 <script setup>
@@ -25,13 +27,15 @@ import freeMindVue from "./components/freeMind.vue";
 import imageContainerVue from "./components/imageContainer.vue";
 import boxWithTitleVue from "./components/boxWithTitle.vue";
 import simpleTextVue from "./components/simpleText.vue";
-// ------------------------.
+////////////////////////////////////////////.
+
 import globalMenuVue from "./components/globalMenu.vue";
 import redirectorEdgeVue from "./components/redirectorEdge.vue";
 
 // Custom Connection line and Custom Edge
 import customConnectionLine from "./components/customConnectionLine.vue";
 import customEdgeVue from "./components/customEdge.vue";
+////////////////////////////////////////////.
 
 // Simple Id Generator for basic Usage.
 import getId from "./utils/radomId.js";
@@ -43,8 +47,6 @@ const store = useStore();
 const { setInteractive, onConnect, addEdges, addNodes, project, onPaneReady } =
   useVueFlow();
 
-const elements = ref([]);
-
 // Initialize elements values here.
 // onMounted(() => {
 //   elements.value = []
@@ -54,6 +56,7 @@ const elements = ref([]);
 onPaneReady(({ fitView }) => {
   fitView();
 });
+////////////////////////////////////////////.
 
 // The dragAndDrop function that helps creating new nodes
 // Just by dragging elements into the canvas.
@@ -64,6 +67,7 @@ const onDragOver = (event) => {
     event.dataTransfer.dropEffect = "move";
   }
 };
+////////////////////////////////////////////.
 
 // The onDrop event handler that is responsible for the creation
 const onDrop = (event) => {
@@ -74,44 +78,27 @@ const onDrop = (event) => {
   const position = project({ x: event.clientX - 450, y: event.clientY - 20 });
 
   const newNode = {
-    id: id,
+    id: type + id,
     type,
     position,
     label: `${type} node`,
   };
 
+  ////////////////////////////////////////////.
   switch (type) {
     case "facebook-message":
       store.$patch((state) => {
-        state.messages.push({
-          id: id,
+        state.layers.messages.push({
+          id: newNode.id,
           type: "facebook-message",
           label: "Label",
           items: [
-            // {
-            //   id: getId(),
-            //   type: "messengerTextVue",
-            //   text: "Entre le Message",
-            //   buttons: [],
-            // },
-            // {
-            //   id: getId(),
-            //   type: "messengerCardVue",
-            //   number: 'Card Comment',
-            //   image_url: '',
-            //   title: "Title",
-            //   subtitle: "Subtitle",
-            //   default_action: [],
-            //   buttons: [],
-            // },
-            // {
-            //   id: getId(),
-            //   type: "messengerImageVue",
-            //   number: "Card Comment",
-            //   image_url: "",
-            //   link: "Facebook URL or Attachement ID",
-            //   buttons: [],
-            // },
+            {
+              id: getId(),
+              type: "messengerTextVue",
+              text: "Entre le Message",
+              buttons: [],
+            },
           ],
         });
       });
@@ -119,8 +106,8 @@ const onDrop = (event) => {
 
     case "starting-step":
       store.$patch((state) => {
-        state.messages.push({
-          id: id,
+        state.layers.messages.push({
+          id: newNode.id,
           type: "starting-step",
           label: "Label",
           content: "Type",
@@ -130,9 +117,8 @@ const onDrop = (event) => {
       break;
 
     case "container":
-      newNode.id = `container${id}`;
       store.$patch((state) => {
-        state.messages.push({
+        state.layers.messages.push({
           id: newNode.id,
           type: "container",
           label: "Label",
@@ -144,9 +130,8 @@ const onDrop = (event) => {
       break;
 
     case "redirector":
-      newNode.id = `redirector${id}`;
       store.$patch((state) => {
-        state.messages.push({
+        state.layers.messages.push({
           id: newNode.id,
           type: "redirector",
           label: "Label",
@@ -158,9 +143,8 @@ const onDrop = (event) => {
       break;
 
     case "node-image":
-      newNode.id = `node-image${id}`;
       store.$patch((state) => {
-        state.messages.push({
+        state.layers.messages.push({
           id: newNode.id,
           type: "node-image",
           label: "Label",
@@ -173,9 +157,8 @@ const onDrop = (event) => {
       break;
 
     case "free-mind":
-      newNode.id = `free-mind${id}`;
       store.$patch((state) => {
-        state.messages.push({
+        state.layers.messages.push({
           id: newNode.id,
           type: "free-mind",
           label: "Label",
@@ -188,9 +171,8 @@ const onDrop = (event) => {
       break;
 
     case "box-with-title":
-      newNode.id = `box-with-title${id}`;
       store.$patch((state) => {
-        state.messages.push({
+        state.layers.messages.push({
           id: newNode.id,
           type: "box-with-title",
           label: "Label",
@@ -201,20 +183,44 @@ const onDrop = (event) => {
       });
       break;
 
+    case "simple-text":
+      store.$patch((state) => {
+        state.layers.messages.push({
+          id: newNode.id,
+          type: "simple-text",
+          subtitle: "Subtitle",
+          color: "#000000",
+        });
+      });
+      break;
+
+    case "quick-reply":
+      store.$patch((state) => {
+        state.layers.messages.push({
+          id: newNode.id,
+          type: "quick-reply",
+          text: "Quick Reply",
+        });
+      });
+      break;
+
     default:
       break;
   }
+  ////////////////////////////////////////////.
 
   // Implementation of a basic container catching
   // TODO : update parent dynamicaly
   if (event.target.parentNode.id.substring(-1, 9) == "container") {
     console.log("in a container");
     newNode.parentNode = event.target.parentNode.id;
-    newNode.extent = "parent";
+    // newNode.extent = "parent";
   }
+  ////////////////////////////////////////////.
 
   addNodes([newNode]);
 };
+////////////////////////////////////////////.
 
 // OnConnect node event, there is more work to do here.
 onConnect((params) => {
@@ -276,7 +282,18 @@ onMounted(() => {
 
 // Local Variables and props related things.
 let messageToEdit = ref("");
+const elements = ref([]);
 ////////////////////////////////////////////.
+
+const onChange = (event) => {
+  event.forEach((element) => {
+    if (element.type == "remove") {
+      store.layers.messages = store.layers.messages.filter((item) => {
+        return item.id != element.id;
+      });
+    }
+  });
+};
 </script>
 
 <template>
@@ -292,64 +309,74 @@ let messageToEdit = ref("");
       <VueFlow
         v-model="elements"
         class="customnodeflow"
+        :snap-to-grid="true"
         :select-nodes-on-drag="true"
+        :only-render-visible-elements="true"
         :max-zoom="50"
         :min-zoom="0.05"
         @dragover="onDragOver"
         @drop="onDrop"
         @nodeDoubleClick="onClick"
+        @nodesChange="onChange"
       >
-        <Background :variant="BackgroundVariant.Lines" />
+        <Background pattern-color="#999" gap="16" size="1.2" />
 
         <!-- Custom Connection from example -->
         <template #connection-line="props">
           <customConnectionLine v-bind="props" />
         </template>
+        <!-- Custom Connection from example -->
 
         <!-- Custom Edge from example -->
         <template #edge-custom="props">
           <customEdgeVue v-bind="props" />
         </template>
+        <!-- Custom Edge from example -->
+
+        <!-- Redirector used as a proxy, for returning edges -->
         <template #node-redirector="props">
           <redirectorEdgeVue v-bind="props" />
         </template>
+        <!-- Redirector used as a proxy, for returning edges -->
 
         <!-- Imported Custom Templates -->
         <template #node-container="props">
-          <container :id="props.id" />
+          <container :id="props.id" :selected="props.selected" />
         </template>
         <template #node-starting-step="props">
-          <startingStep :id="props.id" />
+          <startingStep :id="props.id" :selected="props.selected" />
         </template>
         <template #node-facebook-message="props">
-          <facebookMessage :id="props.id" />
+          <facebookMessage :id="props.id" :selected="props.selected" />
         </template>
         <template #node-quick-reply="props">
-          <messengerQuickReplyVue :id="props.id" />
+          <messengerQuickReplyVue :id="props.id" :selected="props.selected" />
         </template>
         <template #node-free-mind="props">
-          <freeMindVue :id="props.id" />
+          <freeMindVue :id="props.id" :selected="props.selected" />
         </template>
         <template #node-node-image="props">
-          <imageContainerVue :id="props.id" />
+          <imageContainerVue :id="props.id" :selected="props.selected" />
         </template>
         <template #node-box-with-title="props">
-          <boxWithTitleVue :id="props.id" />
+          <boxWithTitleVue :id="props.id" :selected="props.selected" />
         </template>
         <template #node-simple-text="props">
-          <simpleTextVue :id="props.id" />
+          <simpleTextVue :id="props.id" :selected="props.selected" />
         </template>
-
         <!-- End of importing templates -->
+
         <Controls />
         <MiniMap v-show="messageToEdit == ''" />
       </VueFlow>
     </div>
 
+    <!-- Message Editor extension -->
     <messageEditorVue
-      v-show="messageToEdit != ''"
+      v-if="messageToEdit != ''"
       :id="messageToEdit"
     ></messageEditorVue>
+    <!-- Message Editor extension -->
   </div>
 </template>
 

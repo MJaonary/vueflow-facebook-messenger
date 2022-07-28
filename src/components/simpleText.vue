@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, watch, onMounted } from "vue";
 import { Handle, Position, useVueFlow } from "@braks/vue-flow";
 
 // Usage of Store Pinia
@@ -8,43 +8,54 @@ const store = useStore();
 
 const { applyNodeChanges } = useVueFlow();
 
-// Default id is passed from the component.
-const props = defineProps({
-  id: String,
-});
-
+// Computed Values from Store.
 let localStates = computed(() => {
-  return store.messages.filter((element) => element.id == props.id)[0];
+  return store.getMessageById(props.id);
 });
+////////////////////////////////////////////.
 
+// Elements related methods.
 const deleteElement = (event, id) => {
   applyNodeChanges([{ type: "remove", id }]);
   event.stopPropagation();
-  store.messages = store.messages.filter((element) => {
+  store.layers.messages = store.layers.messages.filter((element) => {
     return element.id != id;
   });
 };
+////////////////////////////////////////////.
 
-const updateValues = (event) => {
-  switch (event.target.id) {
-    case props.id + "title":
-      localStates.value.title = event.target.innerText || "Title";
-      break;
+// Renderless resizable textarea
+const textarea = ref(null); // Access the textarea by his ref.
 
-    case props.id + "subtitle":
-      localStates.value.subtitle = event.target.innerText || "Description";
-      break;
-
-    case props.id + "label":
-      localStates.value.label = event.target.innerText;
-      break;
-  }
+const resizeTextarea = (event) => {
+  event.target.style.height = "auto";
+  event.target.style.height = event.target.scrollHeight + 4 + "px";
 };
 
+onMounted(() => {
+  textarea.value.style.height = textarea.value.scrollHeight + "px";
+});
+////////////////////////////////////////////.
+
+// Watching Selected Manual event.
+watch(
+  () => props.selected,
+  (isSelected) => (selectedColor.value = isSelected)
+);
+////////////////////////////////////////////.
+
+// Local Variables and props related things.
 const transparent = ref(true);
+let selectedColor = ref(false);
+const props = defineProps({
+  id: String,
+  selected: Boolean,
+});
+////////////////////////////////////////////.
 </script>
 
 <template>
+  <!-- Handle for different utilities -->
   <Handle id="right" class="handle" type="input" :position="Position.Right" />
   <Handle id="left" class="handle" type="input" :position="Position.Left" />
   <Handle
@@ -54,11 +65,14 @@ const transparent = ref(true);
     :position="Position.Bottom"
     style="top: 101%"
   />
+  <!-- Handle for different utilities -->
+
   <div
     @mouseenter="transparent = false"
     @mouseleave="transparent = true"
     class="d-flex flex-column align-items-center"
   >
+    <!-- Delete Button and color controls -->
     <div
       class="d-flex button-container"
       :class="{ transparent: transparent }"
@@ -68,7 +82,7 @@ const transparent = ref(true);
         type="color"
         class="container-color"
         v-model="localStates.color"
-        :style="{ backgroundColor: `${localStates.color}` }"
+        :style="{ backgroundColor: localStates.color }"
       />
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -84,47 +98,37 @@ const transparent = ref(true);
         />
       </svg>
     </div>
+    <!-- Delete Button and color controls -->
+
     <div
       class="main-container"
-      :style="{ border: `3px ${localStates.color} solid` }"
+      :style="{
+        border: selectedColor
+          ? '3px red solid'
+          : `3px ${localStates.color} solid`,
+      }"
     >
-      <div class="starting-step">
-        <div class="d-flex align-items-center justify-content-center">
-          <div
-            class="p-2 starting-step-header"
-            :id="id + 'label'"
-            contenteditable="true"
-            @input="updateValues"
-          >
-            {{ localStates.label }}
-          </div>
-        </div>
-      </div>
       <div class="content">
-        <div
-          class="add-type"
-          :id="id + 'title'"
-          contenteditable="true"
-          @input="updateValues"
-        >
-          {{ localStates.title }}
-        </div>
-        <div
-          class="add-type"
+        <!-- Subtitle part -->
+        <textarea
           :id="id + 'subtitle'"
-          contenteditable="true"
-          @input="updateValues"
+          ref="textarea"
+          v-model="localStates.subtitle"
+          @input="resizeTextarea"
         >
           {{ localStates.subtitle }}
-        </div>
+        </textarea>
+        <!-- Subtitle part -->
       </div>
     </div>
   </div>
 </template>
 
 <style scoped>
-[contenteditable]:focus {
-  outline: 3px solid #e1faec;
+[contenteditable]:focus,
+textarea:focus {
+  outline: 2px #74747463 solid;
+  border-radius: 1rem;
 }
 .container-color {
   width: 1rem;
@@ -132,17 +136,23 @@ const transparent = ref(true);
   margin-right: 5px;
   border-radius: 1rem;
 }
-.add-type {
+textarea {
+  width: 100%;
+  display: block;
   text-align: left;
   border-radius: 1rem;
   padding: 0.4rem;
+  border: 2px rgb(203, 203, 203) dashed;
 }
 .content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
   background-color: #fff;
   padding: 0.5rem 1rem 0.5rem 1rem;
   width: 100%;
-  border-bottom-left-radius: 1rem;
-  border-bottom-right-radius: 1rem;
+  border-radius: 1rem;
   cursor: pointer;
 }
 .handle {
@@ -178,19 +188,20 @@ const transparent = ref(true);
 .starting-step {
   border-top-left-radius: 1rem;
   border-top-right-radius: 1rem;
-  background-color: white;
   width: 18rem;
   height: 3rem;
   font-size: medium;
   text-align: left;
   padding-left: 0.5rem;
   padding-top: 0.3rem;
+  background-color: rgba(255, 255, 255, 0.442);
 }
 .starting-step {
   border-bottom: 1px solid #eee;
 }
 .main-container {
-  max-width: calc(18rem + 6px);
+  width: calc(18rem + 6px);
+  height: 100%;
   border-radius: 1rem;
   box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
 }

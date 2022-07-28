@@ -49,6 +49,16 @@ const onDragStart = (event, nodeType) => {
             </div>
             <div style="width: 100%">
               <div class="p-1 starting-step-header d-flex flex-column">
+                <div
+                  style="
+                    font-size: x-small;
+                    color: #7e8c9e;
+                    height: 8px;
+                    margin-bottom: 3px;
+                  "
+                >
+                  Vue Flow
+                </div>
                 Simple text
               </div>
             </div>
@@ -93,6 +103,16 @@ const onDragStart = (event, nodeType) => {
             </div>
             <div style="width: 100%">
               <div class="p-1 starting-step-header d-flex flex-column">
+                <div
+                  style="
+                    font-size: x-small;
+                    color: #7e8c9e;
+                    height: 8px;
+                    margin-bottom: 3px;
+                  "
+                >
+                  Vue Flow
+                </div>
                 Box With Title
               </div>
             </div>
@@ -134,6 +154,16 @@ const onDragStart = (event, nodeType) => {
             </div>
             <div style="width: 100%">
               <div class="p-1 starting-step-header d-flex flex-column">
+                <div
+                  style="
+                    font-size: x-small;
+                    color: #7e8c9e;
+                    height: 8px;
+                    margin-bottom: 3px;
+                  "
+                >
+                  Vue Flow
+                </div>
                 Container
               </div>
             </div>
@@ -176,6 +206,16 @@ const onDragStart = (event, nodeType) => {
             </div>
             <div style="width: 100%">
               <div class="p-1 starting-step-header d-flex flex-column">
+                <div
+                  style="
+                    font-size: x-small;
+                    color: #7e8c9e;
+                    height: 8px;
+                    margin-bottom: 3px;
+                  "
+                >
+                  Vue Flow
+                </div>
                 Redirector Edge
               </div>
             </div>
@@ -217,6 +257,16 @@ const onDragStart = (event, nodeType) => {
             </div>
             <div style="width: 100%">
               <div class="p-1 starting-step-header d-flex flex-column">
+                <div
+                  style="
+                    font-size: x-small;
+                    color: #7e8c9e;
+                    height: 8px;
+                    margin-bottom: 3px;
+                  "
+                >
+                  Vue Flow
+                </div>
                 Google Embed Frame
               </div>
             </div>

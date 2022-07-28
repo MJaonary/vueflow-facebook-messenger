@@ -108,7 +108,6 @@ const props = defineProps({
       class="bubble"
       ref="textarea"
       :class="{ 'with-buttons': localButtons.length > 0 }"
-      :id="id + 'message-text'"
       v-model="localItems.text"
       @input="resizeTextarea"
     >
@@ -157,7 +156,7 @@ const props = defineProps({
       <Handle
         :id="button.id + 'right'"
         class="handle"
-        type="input"
+        type="outupt"
         :position="Position.Right"
         style="top: 1.4rem; left: 100% !important"
       />
@@ -254,9 +253,7 @@ const props = defineProps({
 
 .bubble {
   width: 100%;
-  height: auto;
   white-space: normal;
-  height: auto;
   background-color: #e5e5e5;
   border: 1px solid #e5e5e5;
   color: rgba(0, 0, 0, 1);
