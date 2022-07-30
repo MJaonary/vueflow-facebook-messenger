@@ -10,7 +10,7 @@ will be implemented.
 * Adding **Messenger Items** can be done using the messenger editor.
 * All functionnality of [vue-flow](https://github.com/bcakmakoglu/vue-flow) can be used on it.
 
-## Screenshoost
+## Screenshoot
 
 ![](./public/screenshoot.png)
 
