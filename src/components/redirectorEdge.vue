@@ -10,7 +10,7 @@ import TrashIcon from "../assets/svg/TrashIcon.svg";
 import { useStore } from "../stores/main.js";
 const store = useStore();
 
-const { applyNodeChanges } = useVueFlow();
+const { applyNodeChanges, applyEdgeChanges, toObject } = useVueFlow();
 
 // Computed Values from Store.
 let localStates = computed(() => {
@@ -26,11 +26,20 @@ const updateValues = (e) => {
 
 // Elements related methods.
 const deleteElement = (event, id) => {
-  applyNodeChanges([{ type: "remove", id }]);
-  store.layers.messages = store.layers.messages.filter((element) => {
-    return element.id != id;
-  });
   event.stopPropagation();
+
+  let connectedEdges = toObject().edges.filter((edge) => edge.target === id);
+  const changeEdgesObjectArray = connectedEdges.map((item) => ({
+    type: "remove",
+    id: item.id,
+  }));
+
+  applyNodeChanges([{ type: "remove", id }]);
+  applyEdgeChanges(changeEdgesObjectArray);
+
+  store.layers.messages = store.layers.messages.filter((element) => {
+    return element.id !== id;
+  });
 };
 ////////////////////////////////////////////.
 
@@ -158,7 +167,6 @@ const props = defineProps({
   clear: left;
   display: inline-block;
   width: 100%;
-  -webkit-appearance: textarea;
 }
 
 .handle {

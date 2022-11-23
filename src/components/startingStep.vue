@@ -2,7 +2,7 @@
 import { ref, computed, watch } from "vue";
 import { Handle, Position, useVueFlow } from "@braks/vue-flow";
 
-
+// Simple Id Generator for basic Usage.
 import getId from "../utils/radomId.js";
 
 // Icons
@@ -13,7 +13,7 @@ import PlayIcon from "../assets/svg/PlayIcon.svg";
 import { useStore } from "../stores/main.js";
 const store = useStore();
 
-const { applyNodeChanges } = useVueFlow();
+const { applyNodeChanges, applyEdgeChanges, toObject } = useVueFlow();
 
 // Computed Values from Store.
 let localStates = computed(() => {
@@ -27,10 +27,19 @@ let localItems = computed(() => {
 
 // Elements related methods.
 const deleteElement = (event, id) => {
-  applyNodeChanges([{ type: "remove", id }]);
   event.stopPropagation();
+
+  let connectedEdges = toObject().edges.filter((edge) => edge.target === id);
+  const changeEdgesObjectArray = connectedEdges.map((item) => ({
+    type: "remove",
+    id: item.id,
+  }));
+
+  applyNodeChanges([{ type: "remove", id }]);
+  applyEdgeChanges(changeEdgesObjectArray);
+
   store.layers.messages = store.layers.messages.filter((element) => {
-    return element.id != id;
+    return element.id !== id;
   });
 };
 ////////////////////////////////////////////.
