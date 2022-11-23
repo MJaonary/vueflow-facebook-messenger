@@ -17,10 +17,12 @@
     "vue": "^3.2.25",
     "vue-resizable": "^2.1.5",
     "vue-simple-context-menu": "^4.0.4",
-    "vue-textarea-autosize": "^1.1.1"
+    "vue-textarea-autosize": "^1.1.1",
+    "vue3-smooth-dnd": "^0.0.2"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^2.3.3",
-    "vite": "^2.9.9"
+    "vite": "^2.9.9",
+    "vite-svg-loader": "^3.6.0"
   }
 }

@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from "vue";
+import { ref } from "vue";
 
 import SidebarVue from "./Sidebar.vue";
 import { useVueFlow } from "@braks/vue-flow";

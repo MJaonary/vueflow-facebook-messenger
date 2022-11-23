@@ -6,6 +6,10 @@ import { Handle, Position, useVueFlow } from "@braks/vue-flow";
 import getId from "../utils/radomId";
 ////////////////////////////////////////////.
 
+// Icons
+import TrashIcon from "../assets/svg/TrashIcon.svg";
+import NextAudio from "../assets/svg/NextAudio.svg";
+
 // Usage of Store Pinia
 import { useStore } from "../stores/main.js";
 const store = useStore();
@@ -63,21 +67,7 @@ const default_image_src_value =
     <!-- Handle for registering comments -->
 
     <!-- Adding image viewer -->
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="16"
-      height="16"
-      fill="currentColor"
-      class="bi bi-skip-end-circle"
-      viewBox="0 0 16 16"
-    >
-      <path
-        d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"
-      />
-      <path
-        d="M6.271 5.055a.5.5 0 0 1 .52.038L9.5 7.028V5.5a.5.5 0 0 1 1 0v5a.5.5 0 0 1-1 0V8.972l-2.71 1.935A.5.5 0 0 1 6 10.5v-5a.5.5 0 0 1 .271-.445z"
-      />
-    </svg>
+    <NextAudio />
     <input
       type="text"
       v-model="localItems.title"
@@ -98,18 +88,7 @@ const default_image_src_value =
       style="position: absolute; top: 50%; right: -2.2rem"
       @click="deleteElement(id)"
     >
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="16"
-        height="16"
-        fill="currentColor"
-        class="bi bi-trash3"
-        viewBox="0 0 16 16"
-      >
-        <path
-          d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5ZM11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H2.506a.58.58 0 0 0-.01 0H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1h-.995a.59.59 0 0 0-.01 0H11Zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5h9.916Zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47ZM8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5Z"
-        />
-      </svg>
+      <TrashIcon />
     </div>
     <!-- Button Poped to request delete element -->
   </div>

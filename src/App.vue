@@ -364,10 +364,10 @@ const onChange = (event) => {
         <template #node-simple-text="props">
           <simpleTextVue :id="props.id" :selected="props.selected" />
         </template>
-        <!-- End of importing templates -->
+        <!-- End of importing Custom templates -->
 
         <Controls />
-        <MiniMap v-show="messageToEdit == ''" />
+        <MiniMap v-show="messageToEdit === ''" />
       </VueFlow>
     </div>
 
