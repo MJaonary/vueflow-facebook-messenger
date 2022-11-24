@@ -10,6 +10,9 @@ import getId from "../utils/radomId";
 import TrashIcon from "../assets/svg/TrashIcon.svg";
 import NextAudio from "../assets/svg/NextAudio.svg";
 
+// Drag and Drop Functionality
+import { Draggable } from "vue3-smooth-dnd";
+
 // Usage of Store Pinia
 import { useStore } from "../stores/main.js";
 const store = useStore();
@@ -48,7 +51,7 @@ const default_image_src_value =
 </script>
 
 <template>
-  <div
+  <Draggable
     class="messenger-container"
     @mouseenter="transparent = false"
     @mouseleave="transparent = true"
@@ -91,7 +94,7 @@ const default_image_src_value =
       <TrashIcon />
     </div>
     <!-- Button Poped to request delete element -->
-  </div>
+  </Draggable>
 </template>
 
 <style scoped>

@@ -5,6 +5,9 @@ import { Handle, Position } from "@braks/vue-flow";
 // Icons
 import TrashIcon from "../assets/svg/TrashIcon.svg";
 
+// Drag and Drop Functionality
+import { Draggable } from "vue3-smooth-dnd";
+
 // Usage of Store Pinia
 import { useStore } from "../stores/main.js";
 const store = useStore();
@@ -52,7 +55,7 @@ const props = defineProps({
 </script>
 
 <template>
-  <div
+  <Draggable
     class="messenger-container"
     @mouseenter="transparent = false"
     @mouseleave="transparent = true"
@@ -100,7 +103,7 @@ const props = defineProps({
       <TrashIcon />
     </div>
     <!-- Button Poped to request delete element -->
-  </div>
+  </Draggable>
 </template>
 
 <style scoped>

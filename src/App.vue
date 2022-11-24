@@ -397,6 +397,10 @@ body,
   color: #2c3e50;
 }
 
+.messenger-container:hover {
+  cursor: move
+}
+
 .vue-flow__minimap {
   background-color: #2c3e50a6;
   transform: scale(75%);

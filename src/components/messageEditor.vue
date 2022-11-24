@@ -17,13 +17,21 @@ import Clock from "../assets/svg/Clock.svg";
 import UserInput from "../assets/svg/UserInput.svg";
 import CloudIcon from "../assets/svg/CloudIcon.svg";
 
+// Drag and Drop Functionality
+import { Container } from "vue3-smooth-dnd";
+import applyDrag from "../utils/applyDrag";
+
 // Usage of Store Pinia
 import { useStore } from "../stores/main.js";
 const store = useStore();
 
 // Computed Values from Store.
-let localStates = computed(() => {
+const localStates = computed(() => {
   return store.getMessageById(props.id);
+});
+
+const localItems = computed(() => {
+  return localStates.value?.items;
 });
 ////////////////////////////////////////////.
 
@@ -135,14 +143,19 @@ const props = defineProps({
   id: String,
 });
 ////////////////////////////////////////////.
+
+const onDrop = (dropResult) => {
+  let content = applyDrag(localItems.value, dropResult);
+  store.setMessageItems(props.id, content);
+};
 </script>
 
 <template>
   <div class="container-editor">
     <div class="message-editor">
-      <div class="elements-display">
+      <Container class="elements-display" @drop="onDrop" orientation="vertical">
         <messageRendererVue :id="id"></messageRendererVue>
-      </div>
+      </Container>
       <div class="elements-adder">
         <div class="element" @click="addElement('messengerTextVue')">
           <div class="icons">
@@ -159,14 +172,16 @@ const props = defineProps({
         <div class="element" @click="addElement('messengerCardVue')">
           <div class="icons">
             <CardIcon
-              style="transform: scale(1.75); padding: 5px 0px 5px 5px;"
+              style="transform: scale(1.75); padding: 5px 0px 5px 5px"
             />
           </div>
           <div>Card</div>
         </div>
         <div class="element" @click="addElement('messengerCardVue')">
           <div class="icons">
-            <GalleryIcon style="transform: scale(1.75); padding: 6px 0px 6px 5px;" />
+            <GalleryIcon
+              style="transform: scale(1.75); padding: 6px 0px 6px 5px"
+            />
           </div>
           <div>Gallery</div>
         </div>
@@ -178,13 +193,17 @@ const props = defineProps({
         </div>
         <div class="element" @click="addElement('messengerVideoVue')">
           <div class="icons">
-            <VideoIcon style="transform: scale(1.25);  padding: 4px 0px 4px 2px;"/>
+            <VideoIcon
+              style="transform: scale(1.25); padding: 4px 0px 4px 2px"
+            />
           </div>
           <div>Video</div>
         </div>
         <div class="element" @click="addElement('messengerFileVue')">
           <div class="icons">
-            <Attachment style="transform: scale(1.35); padding: 6px 0px 6px 5px;" />
+            <Attachment
+              style="transform: scale(1.35); padding: 6px 0px 6px 5px"
+            />
           </div>
           <div>File</div>
         </div>
@@ -196,7 +215,9 @@ const props = defineProps({
         </div>
         <div class="element" @click="addElement('messengerUserInputVue')">
           <div class="icons">
-            <UserInput style="transform: scale(1.75); padding: 7px 0px 6px 5px;" />
+            <UserInput
+              style="transform: scale(1.75); padding: 7px 0px 6px 5px"
+            />
           </div>
           <div>User Input</div>
         </div>
@@ -218,6 +239,7 @@ svg {
   fill: rgba(119, 114, 114, 0.823);
   margin-right: 0.4rem;
 }
+
 .element {
   display: flex;
   justify-content: left;
@@ -239,12 +261,15 @@ svg {
 .element:active {
   background-color: rgba(201, 199, 199, 0.856);
 }
+
 .elements-display {
   display: flex;
   flex-direction: column;
+  justify-content: center !important;
   margin: 2%;
   padding: 2%;
 }
+
 .elements-adder {
   display: flex;
   justify-content: center;
@@ -254,11 +279,13 @@ svg {
   border-radius: 1rem;
   height: 28rem;
 }
+
 .message-editor {
   height: 100%;
   overflow-y: auto;
   overflow-x: hidden;
 }
+
 .container-editor {
   display: flex;
   flex-direction: column;

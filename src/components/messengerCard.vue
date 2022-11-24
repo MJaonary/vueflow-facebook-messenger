@@ -8,6 +8,9 @@ import getId from "../utils/radomId";
 // Icons
 import TrashIcon from "../assets/svg/TrashIcon.svg";
 
+// Drag and Drop Functionality
+import { Draggable } from "vue3-smooth-dnd";
+
 // Usage of Store Pinia
 import { useStore } from "../stores/main.js";
 const store = useStore();
@@ -128,175 +131,177 @@ const default_image_src_value =
 </script>
 
 <template>
-  <!-- Card Header, used as comment -->
-  <div
-    class="number"
-    contenteditable="true"
-    :id="id + 'number'"
-    @input="updateValues"
-  >
-    {{ localItems.number }}
-  </div>
-  <!-- Card Header, used as comment -->
-
-  <!-- Card template, Simple And Usable -->
-  <div
-    class="messenger-container"
-    @mouseenter="transparent = false"
-    @mouseleave="transparent = true"
-    data-toggle="tooltip"
-    data-placement="left"
-    title="Messenger Carousel"
-  >
-    <!-- Handle for registering comments -->
-    <Handle
-      :id="id + 'comment'"
-      class="handle"
-      type="input"
-      :position="Position.Left"
-      style="top: 10%; left: -3.5% !important"
-    />
-    <!-- Handle for registering comments -->
-
-    <!-- Handle for registering comments -->
-    <Handle
-      :id="id + 'right'"
-      class="handle"
-      type="input"
-      :position="Position.Right"
-      style="top: 10%; left: 98% !important"
-    />
-    <!-- Handle for registering comments -->
-
-    <!-- Adding image viewer -->
-    <img
-      :src="localItems.image_url || default_image_src_value"
-      style="width: 100%; height: 9rem; object-fit: contain"
-    />
-    <input
-      type="text"
-      :id="id + 'image_url'"
-      class="image_source_input"
-      v-model="localItems.image_url"
-      placeholder="Enter Image Source here"
-    />
-    <!-- Adding image viewer -->
-
-    <!-- Title Template -->
+  <Draggable>
+    <!-- Card Header, used as comment -->
     <div
-      class="content"
-      :id="id + 'title'"
-      contenteditable
+      class="number"
+      contenteditable="true"
+      :id="id + 'number'"
       @input="updateValues"
     >
-      {{ localItems.title }}
+      {{ localItems.number }}
     </div>
-    <!-- Title Template -->
+    <!-- Card Header, used as comment -->
 
-    <!-- Subtitle Template -->
-    <textarea
-      ref="textarea"
-      v-model="localItems.subtitle"
-      @input="resizeTextarea"
-      placeholder="Subtitle"
-    >
-    </textarea>
-    <!-- Subtitle Template -->
-
-    <!-- Button Poped to request delete element -->
+    <!-- Card template, Simple And Usable -->
     <div
-      class="button-container"
-      :class="{ transparent: transparent }"
-      style="position: absolute; top: 50%; right: -2.2rem"
-      @click="deleteElement(id)"
+      class="messenger-container"
+      @mouseenter="transparent = false"
+      @mouseleave="transparent = true"
+      data-toggle="tooltip"
+      data-placement="left"
+      title="Messenger Carousel"
     >
-      <TrashIcon />
-    </div>
-    <!-- Button Poped to request delete element -->
-
-    <!-- Default Action template : Insert and render -->
-    <!-- Default Action render from localDefaultAction -->
-    <div
-      v-for="button in localDefaultAction"
-      class="button"
-      style="position: relative"
-    >
-      <div>
-        {{ button.text }}
-      </div>
+      <!-- Handle for registering comments -->
       <Handle
-        :id="button.id + 'right'"
+        :id="id + 'comment'"
+        class="handle"
+        type="input"
+        :position="Position.Left"
+        style="top: 10%; left: -3.5% !important"
+      />
+      <!-- Handle for registering comments -->
+
+      <!-- Handle for registering comments -->
+      <Handle
+        :id="id + 'right'"
         class="handle"
         type="input"
         :position="Position.Right"
-        style="top: 1.4rem; left: 100% !important"
+        style="top: 10%; left: 98% !important"
       />
+      <!-- Handle for registering comments -->
+
+      <!-- Adding image viewer -->
+      <img
+        :src="localItems.image_url || default_image_src_value"
+        style="width: 100%; height: 9rem; object-fit: contain"
+      />
+      <input
+        type="text"
+        :id="id + 'image_url'"
+        class="image_source_input"
+        v-model="localItems.image_url"
+        placeholder="Enter Image Source here"
+      />
+      <!-- Adding image viewer -->
+
+      <!-- Title Template -->
+      <div
+        class="content"
+        :id="id + 'title'"
+        contenteditable
+        @input="updateValues"
+      >
+        {{ localItems.title }}
+      </div>
+      <!-- Title Template -->
+
+      <!-- Subtitle Template -->
+      <textarea
+        ref="textarea"
+        v-model="localItems.subtitle"
+        @input="resizeTextarea"
+        placeholder="Subtitle"
+      >
+      </textarea>
+      <!-- Subtitle Template -->
+
+      <!-- Button Poped to request delete element -->
       <div
         class="button-container"
-        @click="deleteDefaultAction(button.id)"
-        style="position: absolute; right: 0"
+        :class="{ transparent: transparent }"
+        style="position: absolute; top: 50%; right: -2.2rem"
+        @click="deleteElement(id)"
       >
         <TrashIcon />
       </div>
-    </div>
-    <!-- Default Action render from localButtons -->
-    <div
-      class="button"
-      @click="insertDefaultAction"
-      v-if="localDefaultAction.length < 1"
-    >
-      Insert Default Action
-    </div>
-    <!-- Default Action template : Insert and render -->
+      <!-- Button Poped to request delete element -->
 
-    <!-- Button template : Insert and render -->
-    <!-- Button render from localButtons -->
-    <div
-      v-for="button in localButtons"
-      class="button"
-      style="position: relative"
-    >
+      <!-- Default Action template : Insert and render -->
+      <!-- Default Action render from localDefaultAction -->
       <div
-        :id="button.id + 'button'"
-        contenteditable="true"
-        @input="
+        v-for="button in localDefaultAction"
+        class="button"
+        style="position: relative"
+      >
+        <div>
+          {{ button.text }}
+        </div>
+        <Handle
+          :id="button.id + 'right'"
+          class="handle"
+          type="input"
+          :position="Position.Right"
+          style="top: 1.4rem; left: 100% !important"
+        />
+        <div
+          class="button-container"
+          @click="deleteDefaultAction(button.id)"
+          style="position: absolute; right: 0"
+        >
+          <TrashIcon />
+        </div>
+      </div>
+      <!-- Default Action render from localButtons -->
+      <div
+        class="button"
+        @click="insertDefaultAction"
+        v-if="localDefaultAction.length < 1"
+      >
+        Insert Default Action
+      </div>
+      <!-- Default Action template : Insert and render -->
+
+      <!-- Button template : Insert and render -->
+      <!-- Button render from localButtons -->
+      <div
+        v-for="button in localButtons"
+        class="button"
+        style="position: relative"
+      >
+        <div
+          :id="button.id + 'button'"
+          contenteditable="true"
+          @input="
+            (event) => {
+              updateValues(event, button.id);
+            }
+          "
+        >
+          {{ button.text }}
+        </div>
+        <Handle
+          :id="button.id + 'right'"
+          class="handle"
+          type="input"
+          :position="Position.Right"
+          style="top: 1.4rem; left: 100% !important"
+        />
+        <div
+          class="button-container"
+          @click="deleteButton(button.id)"
+          style="position: absolute; right: 0"
+        >
+          <TrashIcon />
+        </div>
+      </div>
+      <!-- Button render from localButtons -->
+      <div
+        v-if="localButtons.length < 3"
+        class="button"
+        @click="
           (event) => {
-            updateValues(event, button.id);
+            insertButton();
           }
         "
       >
-        {{ button.text }}
+        Insert Button
       </div>
-      <Handle
-        :id="button.id + 'right'"
-        class="handle"
-        type="input"
-        :position="Position.Right"
-        style="top: 1.4rem; left: 100% !important"
-      />
-      <div
-        class="button-container"
-        @click="deleteButton(button.id)"
-        style="position: absolute; right: 0"
-      >
-        <TrashIcon />
-      </div>
+      <!-- Button template : Insert and render -->
     </div>
-    <!-- Button render from localButtons -->
-    <div
-      v-if="localButtons.length < 3"
-      class="button"
-      @click="
-        (event) => {
-          insertButton();
-        }
-      "
-    >
-      Insert Button
-    </div>
-    <!-- Button template : Insert and render -->
-  </div>
-  <!-- Card template, Simple And Usable -->
+    <!-- Card template, Simple And Usable -->
+  </Draggable>
 </template>
 
 <style scoped>

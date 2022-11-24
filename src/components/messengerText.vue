@@ -9,6 +9,9 @@ import getId from "../utils/radomId";
 // Icons
 import TrashIcon from "../assets/svg/TrashIcon.svg";
 
+// Drag and Drop Functionality
+import { Draggable } from "vue3-smooth-dnd";
+
 // Usage of Store Pinia
 import { useStore } from "../stores/main.js";
 const store = useStore();
@@ -89,7 +92,7 @@ const props = defineProps({
 </script>
 
 <template>
-  <div
+  <Draggable
     class="messenger-container"
     @mouseenter="transparent = false"
     @mouseleave="transparent = true"
@@ -127,45 +130,50 @@ const props = defineProps({
     </div>
     <!-- Button Poped to request delete element -->
 
-    <!-- Button template : Insert and render -->
-    <!-- Button render from localButtons -->
     <div
-      v-for="button in localButtons"
-      class="button"
-      style="position: relative"
+      class="d-flex flex-column justify-content-center align-items-center"
+      style="width: 100%"
     >
+      <!-- Button template : Insert and render -->
+      <!-- Button render from localButtons -->
       <div
-        :id="button.id + 'button'"
-        contenteditable="true"
-        @input="
-          (event) => {
-            updateValues(event, button.id);
-          }
-        "
+        v-for="button in localButtons"
+        class="button"
+        style="position: relative"
       >
-        {{ button.text }}
+        <div
+          :id="button.id + 'button'"
+          contenteditable="true"
+          @input="
+            (event) => {
+              updateValues(event, button.id);
+            }
+          "
+        >
+          {{ button.text }}
+        </div>
+        <Handle
+          :id="button.id + 'right'"
+          class="handle"
+          type="outupt"
+          :position="Position.Right"
+          style="top: 1.4rem; left: 100% !important"
+        />
+        <div
+          class="button-container"
+          @click="deleteButton(button.id)"
+          style="position: absolute; right: 0"
+        >
+          <TrashIcon />
+        </div>
       </div>
-      <Handle
-        :id="button.id + 'right'"
-        class="handle"
-        type="outupt"
-        :position="Position.Right"
-        style="top: 1.4rem; left: 100% !important"
-      />
-      <div
-        class="button-container"
-        @click="deleteButton(button.id)"
-        style="position: absolute; right: 0"
-      >
-        <TrashIcon />
+      <!-- Button render from localButtons -->
+      <div class="button" @click="insertButton" v-if="localButtons.length < 3">
+        Insert Button
       </div>
+      <!-- Button template : Insert and render -->
     </div>
-    <!-- Button render from localButtons -->
-    <div class="button" @click="insertButton" v-if="localButtons.length < 3">
-      Insert Button
-    </div>
-    <!-- Button template : Insert and render -->
-  </div>
+  </Draggable>
 </template>
 
 <style scoped>
@@ -193,6 +201,7 @@ const props = defineProps({
   position: relative;
   display: flex;
   flex-direction: column;
+  justify-content: center;
   align-items: center;
   border: 2px solid;
   border-radius: 1rem;
