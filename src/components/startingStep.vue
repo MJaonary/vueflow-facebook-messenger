@@ -29,7 +29,7 @@ let localItems = computed(() => {
 const deleteElement = (event, id) => {
   event.stopPropagation();
 
-  let connectedEdges = toObject().edges.filter((edge) => edge.target === id);
+  let connectedEdges = toObject().edges.filter((edge) => [edge.target, edge.source].some(item => item === id));
   const changeEdgesObjectArray = connectedEdges.map((item) => ({
     type: "remove",
     id: item.id,

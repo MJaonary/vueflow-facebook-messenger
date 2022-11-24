@@ -31,7 +31,7 @@ const updateValues = (event) => {
 const deleteElement = (event, id) => {
   event.stopPropagation();
 
-  let connectedEdges = toObject().edges.filter((edge) => edge.target === id);
+  let connectedEdges = toObject().edges.filter((edge) => [edge.target, edge.source].some(item => item === id));
   const changeEdgesObjectArray = connectedEdges.map((item) => ({
     type: "remove",
     id: item.id,
@@ -80,53 +80,27 @@ const props = defineProps({
   <!-- Handle for different utilities -->
   <Handle id="right" class="handle" type="input" :position="Position.Right" />
   <Handle id="left" class="handle" type="input" :position="Position.Left" />
-  <Handle
-    id="bottom"
-    class="handle"
-    type="input"
-    :position="Position.Bottom"
-    style="top: 101%"
-  />
+  <Handle id="bottom" class="handle" type="input" :position="Position.Bottom" style="top: 101%" />
   <!-- Handle for different utilities -->
 
-  <div
-    @mouseenter="transparent = false"
-    @mouseleave="transparent = true"
-    class="d-flex flex-column align-items-center"
-  >
+  <div @mouseenter="transparent = false" @mouseleave="transparent = true" class="d-flex flex-column align-items-center">
     <!-- Delete Button and color controls -->
-    <div
-      class="d-flex button-container"
-      :class="{ transparent: transparent }"
-      style="margin-bottom: 0.5rem"
-    >
-      <input
-        type="color"
-        class="container-color"
-        v-model="localStates.color"
-        :style="{ backgroundColor: `${localStates.color}` }"
-      />
+    <div class="d-flex button-container" :class="{ transparent: transparent }" style="margin-bottom: 0.5rem">
+      <input type="color" class="container-color" v-model="localStates.color"
+        :style="{ backgroundColor: `${localStates.color}` }" />
       <TrashIcon @click="(event) => deleteElement(event, id)" />
     </div>
     <!-- Delete Button and color controls -->
 
-    <div
-      class="main-container"
-      :style="{
-        border: selectedColor
-          ? '3px red solid'
-          : `3px ${localStates.color} solid`,
-      }"
-    >
+    <div class="main-container" :style="{
+      border: selectedColor
+        ? '3px red solid'
+        : `3px ${localStates.color} solid`,
+    }">
       <div class="starting-step">
         <!-- Label part -->
         <div class="d-flex align-items-center justify-content-center">
-          <div
-            class="p-2 starting-step-header"
-            :id="id + 'label'"
-            contenteditable="true"
-            @input="updateValues"
-          >
+          <div class="p-2 starting-step-header" :id="id + 'label'" contenteditable="true" @input="updateValues">
             {{ localStates.label }}
           </div>
         </div>
@@ -134,22 +108,12 @@ const props = defineProps({
       </div>
       <div class="content">
         <!-- Title part -->
-        <input
-          class="add-title"
-          @input="updateValues"
-          v-model="localStates.title"
-          placeholder="Title"
-        />
+        <input class="add-title" @input="updateValues" v-model="localStates.title" placeholder="Title" />
         <!-- Title part -->
 
         <!-- Subtitle part -->
-        <textarea
-          :id="id + 'subtitle'"
-          ref="textarea"
-          v-model="localStates.subtitle"
-          @input="resizeTextarea"
-          placeholder="Subtitle"
-        >
+        <textarea :id="id + 'subtitle'" ref="textarea" v-model="localStates.subtitle" @input="resizeTextarea"
+          placeholder="Subtitle">
           {{ localStates.subtitle }}
         </textarea>
         <!-- Subtitle part -->
@@ -164,12 +128,14 @@ textarea:focus {
   outline: 2px #74747463 solid;
   border-radius: 1rem;
 }
+
 .container-color {
   width: 1rem;
   height: 1rem;
   margin-right: 5px;
   border-radius: 1rem;
 }
+
 .add-title {
   text-align: left;
   border-radius: 1rem;
@@ -178,6 +144,7 @@ textarea:focus {
   font-weight: bold;
   width: 90%;
 }
+
 textarea {
   width: 95%;
   display: block;
@@ -186,6 +153,7 @@ textarea {
   padding: 0.4rem;
   border: 2px rgb(203, 203, 203) dashed;
 }
+
 .content {
   display: flex;
   flex-direction: column;
@@ -198,6 +166,7 @@ textarea {
   border-bottom-right-radius: 1rem;
   cursor: pointer;
 }
+
 .handle {
   background-color: white;
   width: 1rem;
@@ -206,11 +175,13 @@ textarea {
   position: absolute;
   top: 5.1rem;
 }
+
 .handle:hover {
   width: 1.3rem;
   height: 1.3rem;
   transition: width, height 0.5s;
 }
+
 .button-container {
   background-color: white;
   padding: 5px;
@@ -221,13 +192,16 @@ textarea {
   opacity: 100%;
   transition: opacity 0.5s;
 }
+
 .transparent {
   opacity: 0%;
 }
+
 .delete-button:hover {
   background-color: #eee;
   border-radius: 1rem;
 }
+
 .starting-step {
   border-top-left-radius: 1rem;
   border-top-right-radius: 1rem;
@@ -239,15 +213,18 @@ textarea {
   padding-top: 0.3rem;
   background-color: rgba(255, 255, 255, 0.442);
 }
+
 .starting-step {
   border-bottom: 1px solid #eee;
 }
+
 .main-container {
   width: calc(18rem + 6px);
   height: 100%;
   border-radius: 1rem;
   box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
 }
+
 .main-container:hover {
   border: 3px solid #d5cb07;
   border-radius: 1rem;
