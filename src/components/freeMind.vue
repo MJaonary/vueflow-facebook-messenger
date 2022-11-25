@@ -1,19 +1,20 @@
 <script setup>
 import { ref, computed, watch } from "vue";
 
-import { Handle, Position, useVueFlow } from "@braks/vue-flow";
+import { Handle, Position } from "@braks/vue-flow";
+
+// Icons
+import sunIcon from "../assets/svg/sunIcon.svg";
 
 // Vue resizable, the main component used for resizing nodes
 import VueResizable from "vue-resizable";
 
-// Icons
-import TrashIcon from "../assets/svg/TrashIcon.svg";
+// custom Top Menu import
+import topMenu from "./topMenu.vue";
 
 // Usage of Store Pinia
 import { useStore } from "../stores/main.js";
 const store = useStore();
-
-const { applyNodeChanges, applyEdgeChanges, toObject } = useVueFlow();
 
 // Computed Values from Store.
 let localStates = computed(() => {
@@ -25,35 +26,6 @@ let localStates = computed(() => {
 const resize = (event) => {
   localStates.value.width = event.width + "px";
   localStates.value.height = event.height + "px";
-};
-////////////////////////////////////////////.
-
-// Value Update related methods all wrapped here
-const updateValues = (e) => {
-  localStates.value.label = e.target.innerText;
-};
-
-const changeColor = (event) => {
-  localStates.value.color = event.target.value;
-};
-////////////////////////////////////////////.
-
-// Elements related methods.
-const deleteElement = (event, id) => {
-  event.stopPropagation();
-
-  let connectedEdges = toObject().edges.filter((edge) => [edge.target, edge.source].some(item => item === id));
-  const changeEdgesObjectArray = connectedEdges.map((item) => ({
-    type: "remove",
-    id: item.id,
-  }));
-
-  applyNodeChanges([{ type: "remove", id }]);
-  applyEdgeChanges(changeEdgesObjectArray);
-
-  store.layers.messages = store.layers.messages.filter((element) => {
-    return element.id !== id;
-  });
 };
 ////////////////////////////////////////////.
 
@@ -87,26 +59,43 @@ const default_image_src_value =
     "
     @mouseenter="transparent = false"
     @mouseleave="transparent = true"
-    :style="{ border: selectedColor ? '3px red solid' : '3px transparent solid' }"
   >
-    <div
-      class="button-container"
-      :class="{ transparent: transparent }"
-      style="margin-bottom: 0.5rem"
-      @click="(event) => deleteElement(event, id)"
-    >
-      <TrashIcon />
+    <div class="label">
+      <input type="text" v-model="localStates.label" />
+      <!-- Delete Button and color controls Menu -->
+      <sunIcon
+        style="
+          position: absolute;
+          left: -10%;
+          top: -110%;
+          transform: scale(3);
+          border-radius: 50%;
+        "
+        :style="{
+          fill: localStates.color,
+        }"
+      />
+      <topMenu
+        :eid="props.id"
+        :transparent="transparent"
+        style="
+          position: absolute;
+          left: 99%;
+          top: 2%;
+          transform: translate(-100%, 0%);
+          z-index: 1;
+        "
+      ></topMenu>
+      <!-- Delete Button and color controls Menu -->
     </div>
-    <div class="label" contenteditable="true" @input="updateValues">
-      {{ localStates.label }}
-    </div>
+
     <vue-resizable
-      class="resizable-content"
+      class="resizable"
       :width="localStates.width"
       :height="localStates.height"
       :active="['b', 'r', 'rb']"
       @resize:end="resize($event)"
-      :style="{ border: `3px ${localStates.color} solid` }"
+      style="background-color: white"
     >
       <iframe :src="localStates.src" :title="id + 'iframeView'"></iframe>
       <input
@@ -116,13 +105,7 @@ const default_image_src_value =
         placeholder="Enter Document Source here"
       />
     </vue-resizable>
-    <input
-      type="color"
-      :value="localStates.color"
-      class="container-color"
-      @input="changeColor"
-      :style="{ backgroundColor: `${localStates.color}` }"
-    />
+
     <Handle
       :id="id + 'left'"
       class="handle"
@@ -148,68 +131,6 @@ const default_image_src_value =
 </template>
 
 <style scoped>
-iframe {
-  width: 100%;
-  height: 100%;
-}
-.iframe_source_input {
-  width: 90%;
-  overflow: hidden;
-  text-align: center;
-  border-radius: 1rem;
-}
-
-iframe {
-  width: 100%;
-  height: 85%;
-}
-.container-color {
-  position: absolute;
-  bottom: 5px;
-  right: 5px;
-  border: none;
-  width: 1rem;
-  height: 1rem;
-  border: none;
-  border-radius: 1rem;
-}
-.button-container {
-  position: absolute;
-  background-color: white;
-  width: 2rem;
-  padding: 0;
-  margin: 0;
-  border-radius: 1rem;
-  color: rgba(255, 0, 0, 0.877);
-  cursor: pointer;
-  opacity: 100%;
-  transition: opacity 0.5s;
-  right: -2rem;
-  top: 0%;
-}
-
-.transparent {
-  opacity: 0%;
-}
-
-.button-container:hover {
-  background-color: #eee;
-}
-
-.label {
-  position: absolute;
-  left: 50%;
-  font-size: 1rem;
-  transform: translate(-50%, -125%);
-  border: 2px dashed;
-  padding: 5px 1em 0px 1em;
-  border-radius: 1rem;
-  clear: left;
-  display: inline-block;
-  width: 100%;
-  -webkit-appearance: textarea;
-}
-
 .handle {
   background-color: white;
   width: 1rem;
@@ -224,15 +145,62 @@ iframe {
   height: 1.3rem;
   transition: width, height 0.5s;
 }
+iframe {
+  width: 100%;
+  height: 100%;
+}
+.iframe_source_input {
+  width: 100%;
+  height: 1.75rem;
+  overflow: hidden;
+  text-align: center;
+}
 
-.resizable-content {
+iframe {
+  width: 100%;
+  height: 100%;
+}
+
+.label {
   display: flex;
   justify-content: center;
   align-items: center;
-  border-radius: 10px;
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%, -100%);
+  padding: 5px 1em 0px 1em;
+  clear: left;
+  width: 100%;
+  border: 2px solid;
+  border-bottom: transparent;
+  border-top-left-radius: 1rem;
+  border-top-right-radius: 1rem;
+  background-color: white;
+  padding: 0;
+  cursor: move;
+}
+
+.label input {
+  width: calc(100% - 1rem);
+  margin: 0.2rem;
+  padding: 0;
+  outline: transparent;
+  border: transparent;
+  text-align: center;
+  cursor: move;
+}
+
+.resizable {
   display: flex;
   flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border-bottom-left-radius: 1rem;
+  border-bottom-right-radius: 1rem;
+  border: 1px solid;
+  background-color: white;
   width: 25em;
   height: 14em;
+  overflow: hidden;
 }
 </style>

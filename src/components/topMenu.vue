@@ -5,12 +5,13 @@ import { useVueFlow } from "@braks/vue-flow";
 // Icons
 import TrashIcon from "../assets/svg/TrashIcon.svg";
 import GearIcon from "../assets/svg/GearIcon.svg";
+import Check2All from "../assets/svg/check2-all.svg";
 
 // Usage of Store Pinia
 import { useStore } from "../stores/main.js";
 const store = useStore();
 
-const { applyEdgeChanges, applyNodeChanges, toObject } = useVueFlow();
+const { applyEdgeChanges, applyNodeChanges, getNode, toObject } = useVueFlow();
 
 // Computed Values from Store.
 const localStates = computed(() => {
@@ -89,10 +90,30 @@ const props = defineProps({
 ////////////////////////////////////////////.
 
 // Watch over transparent value
-// watch(props.transparent, (oldTransparent) => {
-//   console.log(oldTransparent);
-//   menu.value = false;
-// });
+watch(
+  () => props.transparent,
+  (transparent) => {
+    if (transparent === true) {
+      menu.value = true;
+    }
+  }
+);
+////////////////////////////////////////////.
+
+// Set the parent of the current node.
+const setParent = (parentId) => {
+  menu.value = true;
+  const node = getNode.value(props.eid);
+  if (node.parentNode === parentId) {
+    delete node.parentNode;
+  } else {
+    if (parentId !== props.eid) {
+      node.parentNode = parentId;
+    } else {
+      return;
+    }
+  }
+};
 ////////////////////////////////////////////.
 </script>
 
@@ -115,12 +136,19 @@ const props = defineProps({
     </div>
     <div style="position: relative" @click.self="hanldeContainer">
       <GearIcon class="text-primary" @click.stop="hanldeContainer" />
-      <div v-if="menu" class="menu-container">
+      <div :class="{ transparent: menu }" class="menu-container">
         <div style="width: 80%; border-bottom: 1px black solid">
           Parent Container
         </div>
         <ul>
-          <li v-for="item in containers">
+          <li
+            v-for="item in containers"
+            @click="
+              () => {
+                setParent(item.id);
+              }
+            "
+          >
             <div
               :style="{
                 width: item.id === parent ? '90%' : '100%',
@@ -128,7 +156,9 @@ const props = defineProps({
             >
               {{ item.label }}
             </div>
-            <div v-if="item.id === parent"><GearIcon /></div>
+            <div v-if="item.id === parent">
+              <Check2All class="text-primary" />
+            </div>
           </li>
         </ul>
       </div>
@@ -137,12 +167,16 @@ const props = defineProps({
 </template>
 
 <style scoped>
+li div {
+  transition: opacity 0.5s 0s;
+}
+span:hover,
 svg:hover {
   cursor: pointer;
 }
 .transparent {
   opacity: 0%;
-  transition: opacity 1s 1s;
+  transition: opacity 0.5s 0s;
 }
 /* Button Menu Top Container */
 .button-menu-container {

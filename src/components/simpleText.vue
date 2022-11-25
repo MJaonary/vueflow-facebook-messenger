@@ -1,39 +1,18 @@
 <script setup>
 import { ref, computed, watch, onMounted } from "vue";
-import { Handle, Position, useVueFlow } from "@braks/vue-flow";
+import { Handle, Position } from "@braks/vue-flow";
 
-// Icons
-import TrashIcon from "../assets/svg/TrashIcon.svg";
+// custom Top Menu import
+import topMenu from "./topMenu.vue";
 
 // Usage of Store Pinia
 import { useStore } from "../stores/main.js";
 const store = useStore();
 
-const { applyEdgeChanges, applyNodeChanges, toObject } = useVueFlow();
-
 // Computed Values from Store.
 let localStates = computed(() => {
   return store.getMessageById(props.id);
 });
-////////////////////////////////////////////.
-
-// Elements related methods.
-const deleteElement = (event, id) => {
-  event.stopPropagation();
-
-  let connectedEdges = toObject().edges.filter((edge) => [edge.target, edge.source].some(item => item === id));
-  const changeEdgesObjectArray = connectedEdges.map((item) => ({
-    type: "remove",
-    id: item.id,
-  }));
-
-  applyNodeChanges([{ type: "remove", id }]);
-  applyEdgeChanges(changeEdgesObjectArray);
-
-  store.layers.messages = store.layers.messages.filter((element) => {
-    return element.id !== id;
-  });
-};
 ////////////////////////////////////////////.
 
 // Renderless resizable textarea
@@ -84,22 +63,9 @@ const props = defineProps({
     @mouseleave="transparent = true"
     class="d-flex flex-column align-items-center"
   >
-    <!-- Delete Button and color controls -->
-    <div
-      class="d-flex button-container"
-      :class="{ transparent: transparent }"
-      style="margin-bottom: 0.5rem"
-    >
-      <input
-        type="color"
-        class="container-color"
-        v-model="localStates.color"
-        :style="{ backgroundColor: localStates.color }"
-      />
-
-      <TrashIcon @click="(event) => deleteElement(event, id)" />
-    </div>
-    <!-- Delete Button and color controls -->
+    <!-- Delete Button and color controls Menu -->
+    <topMenu :eid="props.id" :transparent="transparent"></topMenu>
+    <!-- Delete Button and color controls Menu -->
 
     <div
       class="main-container"
@@ -128,22 +94,17 @@ const props = defineProps({
 <style scoped>
 [contenteditable]:focus,
 textarea:focus {
-  outline: 2px #74747463 solid;
   border-radius: 1rem;
 }
-.container-color {
-  width: 1rem;
-  height: 1rem;
-  margin-right: 5px;
-  border-radius: 1rem;
-}
+
 textarea {
   width: 100%;
   display: block;
   text-align: left;
   border-radius: 1rem;
-  padding: 0.4rem;
+  padding: 0.3rem;
   border: 2px rgb(203, 203, 203) dashed;
+  outline: transparent;
 }
 .content {
   display: flex;
@@ -151,7 +112,7 @@ textarea {
   justify-content: center;
   align-items: center;
   background-color: #fff;
-  padding: 0.5rem 1rem 0.5rem 1rem;
+  padding: 0.2rem;
   width: 100%;
   border-radius: 1rem;
   cursor: pointer;
@@ -169,37 +130,7 @@ textarea {
   height: 1.3rem;
   transition: width, height 0.5s;
 }
-.button-container {
-  background-color: white;
-  padding: 5px;
-  margin: 0;
-  border-radius: 1rem;
-  color: rgba(255, 0, 0, 0.877);
-  cursor: pointer;
-  opacity: 100%;
-  transition: opacity 0.5s;
-}
-.transparent {
-  opacity: 0%;
-}
-.delete-button:hover {
-  background-color: #eee;
-  border-radius: 1rem;
-}
-.starting-step {
-  border-top-left-radius: 1rem;
-  border-top-right-radius: 1rem;
-  width: 18rem;
-  height: 3rem;
-  font-size: medium;
-  text-align: left;
-  padding-left: 0.5rem;
-  padding-top: 0.3rem;
-  background-color: rgba(255, 255, 255, 0.442);
-}
-.starting-step {
-  border-bottom: 1px solid #eee;
-}
+
 .main-container {
   width: calc(18rem + 6px);
   height: 100%;

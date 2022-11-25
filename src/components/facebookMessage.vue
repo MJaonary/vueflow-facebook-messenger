@@ -1,19 +1,18 @@
 <script setup>
 import { ref, computed, watch } from "vue";
-import { Handle, Position, useVueFlow } from "@braks/vue-flow";
+import { Handle, Position } from "@braks/vue-flow";
 
 import messageRendererVue from "./messageRenderer.vue";
 
-// Icons
-import TrashIcon from "../assets/svg/TrashIcon.svg";
-import Messenger from "../assets/svg/Messenger.svg";
+// custom Top Menu import
+import topMenu from "./topMenu.vue";
 
+// Icons
+import Messenger from "../assets/svg/Messenger.svg";
 
 // Usage of Store Pinia
 import { useStore } from "../stores/main.js";
 const store = useStore();
-
-const { applyNodeChanges, applyEdgeChanges, toObject } = useVueFlow();
 
 // Computed Values from Store.
 let localStates = computed(() => {
@@ -23,39 +22,6 @@ let localStates = computed(() => {
 let messageToEdit = computed(() => {
   return store.messageToEdit;
 });
-////////////////////////////////////////////.
-
-// Elements related methods.
-const deleteElement = (event, id) => {
-  event.stopPropagation();
-
-  let connectedEdges = toObject().edges.filter((edge) => [edge.target, edge.source].some(item => item === id));
-  const changeEdgesObjectArray = connectedEdges.map((item) => ({
-    type: "remove",
-    id: item.id,
-  }));
-
-  applyNodeChanges([{ type: "remove", id }]);
-  applyEdgeChanges(changeEdgesObjectArray);
-
-  store.layers.messages = store.layers.messages.filter((element) => {
-    return element.id !== id;
-  });
-};
-////////////////////////////////////////////.
-
-// Value Update related methods all wrapped here
-const updateValues = (event) => {
-  switch (event.target.id) {
-    case props.id + "type":
-      localStates.value.content = event.target.innerText;
-      break;
-
-    case props.id + "label":
-      localStates.value.label = event.target.innerText;
-      break;
-  }
-};
 ////////////////////////////////////////////.
 
 // Watching Selected Manual event.
@@ -98,32 +64,31 @@ const props = defineProps({
     :position="Position.Bottom"
     style="top: 100%; left: 50% !important"
   />
+
   <div
     @mouseenter="transparent = false"
     @mouseleave="transparent = true"
     class="d-flex flex-column align-items-center"
+    style="background-color: white"
   >
-    <div
-      class="label"
-      :id="id + 'label'"
-      contenteditable="true"
-      @input="updateValues"
-    >
-      {{ localStates.label }}
+    <div class="label">
+      <input type="text" v-model="localStates.label" />
+      <!-- Delete Button and color controls Menu -->
+      <topMenu
+        :eid="props.id"
+        :transparent="transparent"
+        style="
+          position: absolute;
+          left: 99%;
+          top: 2%;
+          transform: translate(-100%, 0%);
+          z-index: 1;
+        "
+      ></topMenu>
+      <!-- Delete Button and color controls Menu -->
     </div>
-    <div
-      class="button-container"
-      :class="{ transparent: transparent }"
-      style="margin-bottom: 0.5rem"
-      @click="(event) => deleteElement(event, id)"
-    >
-      <TrashIcon />
-    </div>
-    <div
-      class="main-container"
-      :class="{ 'on-edit': messageToEdit == id }"
-      :style="{ borderColor: selectedColor ? 'red' : '' }"
-    >
+
+    <div class="main-container" :class="{ 'on-edit': messageToEdit == id }">
       <div class="starting-step">
         <div class="d-flex align-items-center">
           <div style="width: 2rem; height: 2rem">
@@ -150,18 +115,6 @@ const props = defineProps({
 }
 [contenteditable] {
   cursor: text;
-}
-.label {
-  position: absolute;
-  left: 50%;
-  font-size: 1rem;
-  transform: translate(-50%, -100%);
-  border: 2px dashed;
-  padding: 5px 1em 0px 1em;
-  border-radius: 1rem;
-  clear: left;
-  display: inline-block;
-  width: 100%;
 }
 .content {
   background-color: #fff;
@@ -197,22 +150,51 @@ const props = defineProps({
   height: 1.3rem;
   transition: width, height 0.5s;
 }
-.button-container {
+.label {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%, -100%);
+  padding: 5px 1em 0px 1em;
+  clear: left;
+  width: 100%;
+  border: 2px solid;
+  border-bottom: transparent;
+  border-top-left-radius: 1rem;
+  border-top-right-radius: 1rem;
   background-color: white;
-  width: 2rem;
   padding: 0;
-  margin: 0;
-  border-radius: 1rem;
-  color: rgba(255, 0, 0, 0.877);
-  cursor: pointer;
-  opacity: 100%;
-  transition: opacity 0.5s;
+  cursor: move;
 }
-.transparent {
-  opacity: 0%;
+.label input {
+  width: calc(100% - 1rem);
+  margin: 0.2rem;
+  padding: 0;
+  outline: transparent;
+  border: transparent;
+  text-align: center;
+  cursor: move;
 }
-.button-container:hover {
-  background-color: #eee;
+.main-container {
+  max-width: calc(23rem + 6px);
+  border: 2px solid black;
+  border-top: 2px transparent;
+  border-bottom-right-radius: 1rem;
+  border-bottom-left-radius: 1rem;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+}
+.main-container:hover {
+  border: 3px #0084ff solid;
+  border-bottom-right-radius: 1rem;
+  border-bottom-left-radius: 1rem;
+}
+.on-edit {
+  border: 3px red solid;
+}
+.starting-step {
+  border-bottom: 1px solid #eee;
 }
 .starting-step {
   border-top-left-radius: 1rem;
@@ -224,21 +206,5 @@ const props = defineProps({
   text-align: left;
   padding-left: 0.5rem;
   padding-top: 0.3rem;
-}
-.starting-step {
-  border-bottom: 1px solid #eee;
-}
-.main-container {
-  max-width: calc(23rem + 6px);
-  border: 3px solid transparent;
-  border-radius: 1rem;
-  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
-}
-.main-container:hover {
-  border: 3px #0084ff solid;
-  border-radius: 1rem;
-}
-.on-edit {
-  border: 3px red solid;
 }
 </style>

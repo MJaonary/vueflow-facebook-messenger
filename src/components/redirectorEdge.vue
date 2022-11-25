@@ -3,8 +3,8 @@ import { ref, computed, watch } from "vue";
 
 import { Handle, Position, useVueFlow } from "@braks/vue-flow";
 
-// Icons
-import TrashIcon from "../assets/svg/TrashIcon.svg";
+// custom Top Menu import
+import topMenu from "./topMenu.vue";
 
 // Usage of Store Pinia
 import { useStore } from "../stores/main.js";
@@ -28,7 +28,9 @@ const updateValues = (e) => {
 const deleteElement = (event, id) => {
   event.stopPropagation();
 
-  let connectedEdges = toObject().edges.filter((edge) => [edge.target, edge.source].some(item => item === id));
+  let connectedEdges = toObject().edges.filter((edge) =>
+    [edge.target, edge.source].some((item) => item === id)
+  );
   const changeEdgesObjectArray = connectedEdges.map((item) => ({
     type: "remove",
     id: item.id,
@@ -61,101 +63,80 @@ const props = defineProps({
 </script>
 
 <template>
-  <div
-    :id="id"
-    style="
-      position: relative;
-      border-radius: 1rem;
-      box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
-    "
-    @mouseenter="transparent = false"
-    @mouseleave="transparent = true"
-    :style="{
-      border: selectedColor ? '3px red solid' : '3px transparent solid',
-    }"
+  <svg
+    class="container-svg"
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 120 120"
+    :fill="localStates.color"
   >
-    <div
-      class="button-container"
-      :class="{ transparent: transparent }"
-      style="margin-bottom: 0.5rem"
-      @click="(event) => deleteElement(event, id)"
+    <path
+      style="transform: scale(6.5) translate(0.075rem, 0.15rem)"
+      d="M4.158 12.025a.5.5 0 0 1 .316.633l-.5 1.5a.5.5 0 0 1-.948-.316l.5-1.5a.5.5 0 0 1 .632-.317zm6 0a.5.5 0 0 1 .316.633l-.5 1.5a.5.5 0 0 1-.948-.316l.5-1.5a.5.5 0 0 1 .632-.317zm-3.5 1.5a.5.5 0 0 1 .316.633l-.5 1.5a.5.5 0 0 1-.948-.316l.5-1.5a.5.5 0 0 1 .632-.317zm6 0a.5.5 0 0 1 .316.633l-.5 1.5a.5.5 0 1 1-.948-.316l.5-1.5a.5.5 0 0 1 .632-.317zm.747-8.498a5.001 5.001 0 0 0-9.499-1.004A3.5 3.5 0 1 0 3.5 11H13a3 3 0 0 0 .405-5.973zM8.5 2a4 4 0 0 1 3.976 3.555.5.5 0 0 0 .5.445H13a2 2 0 0 1 0 4H3.5a2.5 2.5 0 1 1 .605-4.926.5.5 0 0 0 .596-.329A4.002 4.002 0 0 1 8.5 2z"
+    />
+    <foreignObject
+      x="0"
+      y="0"
+      width="100%"
+      height="100%"
+      style="position: relative; border-radius: 1rem; overflow: visible"
+      @mouseenter="transparent = false"
+      @mouseleave="transparent = true"
     >
-      <TrashIcon />
-    </div>
-    <div class="label" contenteditable="true" @input="updateValues">
-      {{ localStates.label }}
-    </div>
-    <div
-      class="resize"
-      :style="{ border: `3px ${localStates.color} solid` }"
-    ></div>
-    <input
-      type="color"
-      v-model="localStates.color"
-      class="container-color"
-      :style="{ backgroundColor: `${localStates.color}` }"
-    />
-    <Handle
-      :id="id + 'left'"
-      class="handle"
-      type="input"
-      :position="Position.Left"
-      style="top: 50%; left: -1.5%"
-    />
-    <Handle
-      :id="id + 'right'"
-      class="handle"
-      type="input"
-      :position="Position.Right"
-      style="top: 50%; right: -1.5%"
-    />
-    <Handle
-      :id="id + 'bottom'"
-      class="handle"
-      type="input"
-      :position="Position.Bottom"
-      style="top: 100.5%"
-    />
-  </div>
+      <div
+        style="
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          font-size: 5px;
+          transform: translate(-50%, -50%);
+        "
+      >
+        <!-- Delete Button and color controls Menu -->
+        <topMenu
+          :eid="props.id"
+          :transparent="transparent"
+          style="position: absolute; transform: translate(-54%, -25%)"
+        ></topMenu>
+        <!-- Delete Button and color controls Menu -->
+      </div>
+
+      <Handle
+        :id="id + 'left'"
+        class="handle"
+        type="input"
+        :position="Position.Left"
+        style="top: 50%; left: 0%"
+      />
+
+      <Handle
+        :id="id + 'right'"
+        class="handle"
+        type="input"
+        :position="Position.Right"
+        style="top: 50%; right: 0"
+      />
+
+      <Handle
+        :id="id + 'bottom'"
+        class="handle"
+        type="input"
+        :position="Position.Bottom"
+        style="top: 67%"
+      />
+    </foreignObject>
+  </svg>
 </template>
 
 <style scoped>
+svg {
+  width: 7rem;
+  height: 7rem;
+  overflow: visible;
+}
+
 [contenteditable]:focus {
   outline: none;
 }
-.container-color {
-  position: absolute;
-  bottom: 5px;
-  right: 44.5%;
-  border: none;
-  width: 1rem;
-  height: 1rem;
-  border: none;
-  border-radius: 1rem;
-}
-.button-container {
-  position: absolute;
-  background-color: white;
-  width: 2rem;
-  padding: 0;
-  margin: 0;
-  border-radius: 1rem;
-  color: rgba(255, 0, 0, 0.877);
-  cursor: pointer;
-  opacity: 100%;
-  transition: opacity 0.5s;
-  right: -2rem;
-  top: 0%;
-}
-
-.transparent {
-  opacity: 0%;
-}
-
-.button-container:hover {
-  background-color: #eee;
-}
-
 .label {
   position: absolute;
   left: 50%;
@@ -170,6 +151,7 @@ const props = defineProps({
 }
 
 .handle {
+  position: absolute;
   background-color: white;
   width: 1rem;
   height: 1rem;
@@ -186,7 +168,8 @@ const props = defineProps({
 
 .resize {
   width: 8rem;
-  height: 25px;
+  height: 2rem;
   border-radius: 1rem;
+  border: 2px red solid;
 }
 </style>

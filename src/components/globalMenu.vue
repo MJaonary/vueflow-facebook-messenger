@@ -30,7 +30,7 @@ const onRestore = (event, fromImport) => {
 
   if (!fromImport) {
     confirmation = confirm(
-      "Restoring State.\nVous allez perdre tout les données non exportée,\nVoulez vous continuer ?"
+      "Restoring State.\nAll data not exported will be lost,\nDo you want to continue ?"
     );
   }
 
@@ -53,7 +53,7 @@ const onRestore = (event, fromImport) => {
 const onExport = () => {
   onSave();
 
-  let name = prompt("Exportation, veuiller entrer un nom de fichier :");
+  let name = prompt("Export, you can specify a file name (optional) :");
 
   let blob = new Blob([JSON.stringify(store.layers)], {
     type: "text/plain;charset=utf-8",
@@ -65,12 +65,10 @@ const onExport = () => {
 
 const onImport = () => {
   if (!importedFile.value) {
-    alert("Vous devez selectionner un fichier à importer.");
+    alert("You must select a file to import.");
   } else {
     if (
-      confirm(
-        "Vous allez perdre tout les données non exportée,\nVoulez vous continuer ?"
-      )
+      confirm("All data not exported will be lost,\nDo you want to continue ?")
     ) {
       localStorage.setItem(storeKey, importedFile.value);
       onRestore(null, true);
@@ -98,7 +96,7 @@ const reader = new FileReader();
 reader.onload = (e) => {
   importedFile.value = e.target.result;
   alert(
-    `File ${importedFileName.value} a été chargée, vous pouvez l'importer.`
+    `File ${importedFileName.value} was uploaded, you can now import its content.`
   );
 };
 ////////////////////////////////////////////.

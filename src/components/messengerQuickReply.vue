@@ -2,8 +2,8 @@
 import { ref, computed, watch } from "vue";
 import { Handle, Position, useVueFlow } from "@braks/vue-flow";
 
-// Icons
-import TrashIcon from "../assets/svg/TrashIcon.svg";
+// custom Top Menu import
+import topMenu from "./topMenu.vue";
 
 // Usage of Store Pinia
 import { useStore } from "../stores/main.js";
@@ -21,7 +21,9 @@ let localStates = computed(() => {
 const deleteElement = (event, id) => {
   event.stopPropagation();
 
-  let connectedEdges = toObject().edges.filter((edge) => [edge.target, edge.source].some(item => item === id));
+  let connectedEdges = toObject().edges.filter((edge) =>
+    [edge.target, edge.source].some((item) => item === id)
+  );
   const changeEdgesObjectArray = connectedEdges.map((item) => ({
     type: "remove",
     id: item.id,
@@ -67,7 +69,7 @@ const props = defineProps({
   <div
     @mouseenter="transparent = false"
     @mouseleave="transparent = true"
-    style="position: relative"
+    style="position: relative; background-color: white; border-radius: 1.5rem"
   >
     <Handle
       :id="id + 'left'"
@@ -87,14 +89,17 @@ const props = defineProps({
     </div>
 
     <!-- Button Poped to request delete element -->
-    <div
-      class="button-container"
-      :class="{ transparent: transparent }"
-      style="position: absolute; top: -1.7rem; right: 35%"
-      @click="($event) => deleteElement($event, id)"
-    >
-      <TrashIcon />
-    </div>
+    <topMenu
+      :eid="props.id"
+      :transparent="transparent"
+      style="
+        position: absolute;
+        left: 0%;
+        top: 0%;
+        transform: translate(50%, -105%);
+        z-index: 1;
+      "
+    ></topMenu>
     <!-- Button Poped to request delete element -->
 
     <Handle

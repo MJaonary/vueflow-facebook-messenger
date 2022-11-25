@@ -9,7 +9,6 @@ import "@braks/vue-flow/dist/theme-default.css";
 import {
   MiniMap,
   Background,
-  BackgroundVariant,
   Controls,
   VueFlow,
   useVueFlow,
@@ -92,6 +91,7 @@ const onDrop = (event) => {
           id: newNode.id,
           type: "facebook-message",
           label: "Label",
+          color: "#ffffff",
           items: [
             {
               id: getId(),
@@ -111,6 +111,7 @@ const onDrop = (event) => {
           type: "starting-step",
           label: "Label",
           content: "Type",
+          color: "#ffffff",
           items: [],
         });
       });
@@ -122,9 +123,9 @@ const onDrop = (event) => {
           id: newNode.id,
           type: "container",
           label: "Label",
-          width: "10em",
-          height: "10em",
-          color: "#000000",
+          width: "20rem",
+          height: "10rem",
+          color: "#3A8CC7",
         });
       });
       break;
@@ -135,8 +136,6 @@ const onDrop = (event) => {
           id: newNode.id,
           type: "redirector",
           label: "Label",
-          width: "10em",
-          height: "10em",
           color: "#000000",
         });
       });
@@ -165,7 +164,7 @@ const onDrop = (event) => {
           src: "",
           width: "25em",
           height: "14em",
-          color: "#000000",
+          color: "#40CE03",
         });
       });
       break;
@@ -200,6 +199,7 @@ const onDrop = (event) => {
           id: newNode.id,
           type: "quick-reply",
           text: "Quick Reply",
+          color: "#ffffff",
         });
       });
       break;
@@ -210,11 +210,8 @@ const onDrop = (event) => {
   ////////////////////////////////////////////.
 
   // Implementation of a basic container catching
-  // TODO : update parent dynamicaly
-  if (event.target.parentNode.id.substring(-1, 9) == "container") {
-    console.log("in a container");
+  if (event.target.parentNode.id.substring(-1, 9) === "container") {
     newNode.parentNode = event.target.parentNode.id;
-    // newNode.extent = "parent";
   }
   ////////////////////////////////////////////.
 
@@ -398,7 +395,7 @@ body,
 }
 
 .messenger-container:hover {
-  cursor: move
+  cursor: move;
 }
 
 .vue-flow__minimap {

@@ -11,6 +11,9 @@ export const useStore = defineStore("main", {
     };
   },
   getters: {
+    getMessages: (state) => {
+      return () => state.layers.messages;
+    },
     getMessageById: (state) => {
       return (messageId) =>
         state.layers.messages.find((element) => element.id == messageId);

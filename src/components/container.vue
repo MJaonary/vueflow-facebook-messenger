@@ -5,14 +5,12 @@ import { Handle, Position, useVueFlow } from "@braks/vue-flow";
 // Vue resizable, the main component used for resizing nodes
 import VueResizable from "vue-resizable";
 
-// Icons
-import TrashIcon from "../assets/svg/TrashIcon.svg";
+// custom Top Menu import
+import topMenu from "./topMenu.vue";
 
 // Usage of Store Pinia
 import { useStore } from "../stores/main.js";
 const store = useStore();
-
-const { applyNodeChanges, applyEdgeChanges, toObject } = useVueFlow();
 
 // Computed Values from Store.
 let localStates = computed(() => {
@@ -24,31 +22,6 @@ let localStates = computed(() => {
 const resize = (event) => {
   localStates.value.width = event.width + "px";
   localStates.value.height = event.height + "px";
-};
-////////////////////////////////////////////.
-
-// Value Update related methods all wrapped here
-const updateValues = (e) => {
-  localStates.value.label = e.target.innerText;
-};
-////////////////////////////////////////////.
-
-// Elements related methods.
-const deleteElement = (event, id) => {
-  event.stopPropagation();
-
-  let connectedEdges = toObject().edges.filter((edge) => [edge.target, edge.source].some(item => item === id));
-  const changeEdgesObjectArray = connectedEdges.map((item) => ({
-    type: "remove",
-    id: item.id,
-  }));
-
-  applyNodeChanges([{ type: "remove", id }]);
-  applyEdgeChanges(changeEdgesObjectArray);
-
-  store.layers.messages = store.layers.messages.filter((element) => {
-    return element.id !== id;
-  });
 };
 ////////////////////////////////////////////.
 
@@ -80,32 +53,35 @@ const props = defineProps({
     @mouseenter="transparent = false"
     @mouseleave="transparent = true"
   >
-    <div
-      class="button-container"
-      :class="{ transparent: transparent }"
-      style="margin-bottom: 0.5rem"
-      @click="(event) => deleteElement(event, id)"
-    >
-      <TrashIcon />
+    <div class="label">
+      <input type="text" v-model="localStates.label" />
+      <!-- Delete Button and color controls Menu -->
+      <topMenu
+        :eid="props.id"
+        :transparent="transparent"
+        style="
+          position: absolute;
+          left: 99%;
+          top: 2%;
+          transform: translate(-100%, 0%);
+          z-index: 1;
+        "
+      ></topMenu>
+      <!-- Delete Button and color controls Menu -->
     </div>
-    <div class="label" contenteditable="true" @input="updateValues">
-      {{ localStates.label }}
-    </div>
+
     <vue-resizable
-      class="resizable-content"
+      class="resizable"
       :width="localStates.width"
       :height="localStates.height"
       :active="['b', 'r', 'rb']"
       @resize:end="resize($event)"
-      :style="{ border: selectedColor ? '3px red solid' : `3px ${localStates.color} solid` }"
+      :style="{
+        'background-color': localStates.color,
+      }"
     >
     </vue-resizable>
-    <input
-      type="color"
-      v-model="localStates.color"
-      class="container-color"
-      :style="{ backgroundColor: `${localStates.color}` }"
-    />
+
     <Handle
       :id="id + 'left'"
       class="handle"
@@ -134,53 +110,6 @@ const props = defineProps({
 [contenteditable]:focus {
   outline: none;
 }
-.container-color {
-  position: absolute;
-  bottom: 5px;
-  right: 5px;
-  border: none;
-  width: 1rem;
-  height: 1rem;
-  border: none;
-  border-radius: 1rem;
-}
-.button-container {
-  position: absolute;
-  background-color: white;
-  width: 2rem;
-  padding: 0;
-  margin: 0;
-  border-radius: 1rem;
-  color: rgba(255, 0, 0, 0.877);
-  cursor: pointer;
-  opacity: 100%;
-  transition: opacity 0.5s;
-  right: -2rem;
-  top: 0%;
-}
-
-.transparent {
-  opacity: 0%;
-}
-
-.button-container:hover {
-  background-color: #eee;
-}
-
-.label {
-  position: absolute;
-  left: 50%;
-  font-size: 1rem;
-  transform: translate(-50%, -125%);
-  border: 2px dashed;
-  padding: 5px 1em 0px 1em;
-  border-radius: 1rem;
-  clear: left;
-  display: inline-block;
-  width: 100%;
-  -webkit-appearance: textarea;
-}
-
 .handle {
   background-color: white;
   width: 1rem;
@@ -196,7 +125,38 @@ const props = defineProps({
   transition: width, height 0.5s;
 }
 
-.resizable-content {
-  border-radius: 10px;
+.label {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%, -100%);
+  padding: 5px 1em 0px 1em;
+  clear: left;
+  display: inline-block;
+  width: 100%;
+  border: 2px solid;
+  border-bottom: transparent;
+  border-top-left-radius: 1rem;
+  border-top-right-radius: 1rem;
+  background-color: white;
+  padding: 0;
+}
+
+.label input {
+  width: calc(100% - 1rem);
+  margin: 0.2rem;
+  padding: 0;
+  outline: transparent;
+  border: transparent;
+  text-align: center;
+}
+
+
+.resizable {
+  border-bottom-left-radius: 1rem;
+  border-bottom-right-radius: 1rem;
+  border: '1px black solid',
 }
 </style>
