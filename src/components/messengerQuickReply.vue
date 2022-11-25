@@ -128,6 +128,7 @@ const props = defineProps({
   height: 1rem;
   border: 2px solid;
   position: absolute;
+  z-index: 1;
 }
 
 .button-container {
