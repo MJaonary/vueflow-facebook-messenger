@@ -1,6 +1,6 @@
 <script setup>
 import { ref, computed, watch } from "vue";
-import { Handle, Position, useVueFlow } from "@braks/vue-flow";
+import { Handle, Position, useVueFlow } from '@vue-flow/core'
 
 // Vue resizable, the main component used for resizing nodes
 import VueResizable from "vue-resizable";

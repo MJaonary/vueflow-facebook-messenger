@@ -1,17 +1,20 @@
 <script setup>
 import { computed, ref, watch } from "vue";
-import { useVueFlow } from "@braks/vue-flow";
+import { useVueFlow } from '@vue-flow/core'
 
 // Icons
 import TrashIcon from "../assets/svg/TrashIcon.svg";
 import GearIcon from "../assets/svg/GearIcon.svg";
 import Check2All from "../assets/svg/check2-all.svg";
+import copyIcon from "../assets/svg/copyIcon.svg";
+
+import { copyVueNode } from "../utils/createVueNode";
 
 // Usage of Store Pinia
 import { useStore } from "../stores/main.js";
 const store = useStore();
 
-const { applyEdgeChanges, applyNodeChanges, getNode, toObject } = useVueFlow();
+const { addNodes, applyEdgeChanges, applyNodeChanges, getNode, toObject } = useVueFlow();
 
 // Computed Values from Store.
 const localStates = computed(() => {
@@ -115,24 +118,25 @@ const setParent = (parentId) => {
   }
 };
 ////////////////////////////////////////////.
+
+// Handle Copying element
+const copyElement = (eid) => {
+  copyVueNode(addNodes, eid, getNode, store);
+};
+////////////////////////////////////////////.
 </script>
 
 <template>
   <div class="button-menu-container" :class="{ transparent: transparent }">
     <div>
-      <span
-        class="color-input"
-        :style="{ backgroundColor: localStates.color }"
-        @click="onClickColorInput"
-        ><input
-          ref="colorInput"
-          type="color"
-          class="container-color"
-          v-model="localStates.color"
-      /></span>
+      <span class="color-input" :style="{ backgroundColor: localStates.color }" @click="onClickColorInput"><input
+          ref="colorInput" type="color" class="container-color" v-model="localStates.color" /></span>
     </div>
     <div @click="(event) => deleteElement(event, eid)">
       <TrashIcon class="text-danger" />
+    </div>
+    <div @click="() => copyElement(eid)">
+      <copyIcon />
     </div>
     <div style="position: relative" @click.self="hanldeContainer">
       <GearIcon class="text-primary" @click.stop="hanldeContainer" />
@@ -141,19 +145,14 @@ const setParent = (parentId) => {
           Parent Container
         </div>
         <ul>
-          <li
-            v-for="item in containers"
-            @click="
-              () => {
-                setParent(item.id);
-              }
-            "
-          >
-            <div
-              :style="{
-                width: item.id === parent ? '90%' : '100%',
-              }"
-            >
+          <li v-for="item in containers" @click="
+            () => {
+              setParent(item.id);
+            }
+          ">
+            <div :style="{
+              width: item.id === parent ? '90%' : '100%',
+            }">
               {{ item.label }}
             </div>
             <div v-if="item.id === parent">
@@ -170,14 +169,7 @@ const setParent = (parentId) => {
 li div {
   transition: opacity 0.5s 0s;
 }
-span:hover,
-svg:hover {
-  cursor: pointer;
-}
-.transparent {
-  opacity: 0%;
-  transition: opacity 0.5s 0s;
-}
+
 /* Button Menu Top Container */
 .button-menu-container {
   display: flex;
@@ -189,14 +181,15 @@ svg:hover {
   transition: opacity 1s 0.5s;
 }
 
-.button-menu-container > div {
+.button-menu-container>div {
   display: flex;
   padding: 0.35rem;
 }
 
-.button-menu-container > div:hover {
+.button-menu-container>div:hover {
   background-color: #eee;
 }
+
 /* Button Menu Top Container */
 
 /* Colored Color Input with input Hidden */
@@ -216,6 +209,7 @@ svg:hover {
   transform: translate(-50%, -50%);
   transform: scale(0);
 }
+
 /* Colored Color Input with input Hidden */
 
 .menu-container {
@@ -237,6 +231,7 @@ ul {
   padding: 0;
   margin: 0.3rem;
 }
+
 li {
   display: flex;
   border: 1px rgb(162, 159, 159) dashed;
@@ -245,13 +240,26 @@ li {
   padding: 0.3rem;
   margin: 0.1rem 0rem;
 }
+
 li::marker {
   content: none;
 }
+
 li:hover {
   background-color: #eee;
 }
+
 li:active {
   transform: scale(1.1);
+}
+
+span:hover,
+svg:hover {
+  cursor: pointer;
+}
+
+.transparent {
+  opacity: 0%;
+  transition: opacity 0.5s 0s;
 }
 </style>

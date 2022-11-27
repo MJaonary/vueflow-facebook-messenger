@@ -1,6 +1,6 @@
 <script setup>
 import { ref, computed, watch } from "vue";
-import { Handle, Position } from "@braks/vue-flow";
+import { Handle, Position } from '@vue-flow/core'
 
 // Simple Id Generator for basic Usage.
 import getId from "../utils/radomId.js";

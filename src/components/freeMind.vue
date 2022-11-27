@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed, watch } from "vue";
 
-import { Handle, Position } from "@braks/vue-flow";
+import { Handle, Position } from "@vue-flow/core";
 
 // Icons
 import sunIcon from "../assets/svg/sunIcon.svg";
@@ -19,6 +19,10 @@ const store = useStore();
 // Computed Values from Store.
 let localStates = computed(() => {
   return store.getMessageById(props.id);
+});
+
+const default_image_src_value = computed(() => {
+  return store.getDefaultValues();
 });
 ////////////////////////////////////////////.
 
@@ -43,9 +47,6 @@ const props = defineProps({
   id: String,
   selected: Boolean,
 });
-// Default image value :
-const default_image_src_value =
-  "https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png";
 ////////////////////////////////////////////.
 </script>
 

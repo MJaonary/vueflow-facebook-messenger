@@ -1,6 +1,6 @@
 <script setup>
 import { ref, computed, onMounted } from "vue";
-import { Handle, Position } from "@braks/vue-flow";
+import { Handle, Position } from "@vue-flow/core";
 
 // Icons
 import TrashIcon from "../../assets/svg/TrashIcon.svg";
@@ -50,6 +50,7 @@ const transparent = ref(true);
 const props = defineProps({
   mid: String,
   id: String,
+  editor: Boolean,
 });
 ////////////////////////////////////////////.
 </script>
@@ -65,6 +66,7 @@ const props = defineProps({
   >
     <!-- Handle for registering comments -->
     <Handle
+      v-if="props.editor === false"
       :id="id + 'comment'"
       class="handle"
       type="input"
@@ -84,6 +86,7 @@ const props = defineProps({
     ></textarea>
     <!-- Handle for registering comments -->
     <Handle
+      v-if="props.editor === false"
       :id="id + 'description'"
       class="handle"
       type="input"

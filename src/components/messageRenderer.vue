@@ -18,7 +18,8 @@ export default {
     messengerFileVue,
     messengerDelayVue,
     messengerUserInputVue,
-    messengerDynamicVue,messengerDynamicVue
+    messengerDynamicVue,
+    messengerDynamicVue,
   },
 };
 </script>
@@ -43,6 +44,7 @@ const localItems = computed(() => {
 // Local Variables and props related things.
 const props = defineProps({
   id: String,
+  editor: { type: Boolean, default: false },
 });
 ////////////////////////////////////////////.
 </script>
@@ -53,8 +55,8 @@ const props = defineProps({
     :is="item.type"
     :mid="id"
     :id="item.id"
+    :editor="props.editor"
   ></component>
 </template>
 
-<style scoped>
-</style>
+<style scoped></style>

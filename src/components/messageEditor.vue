@@ -86,7 +86,7 @@ const addElement = (type) => {
         element = {
           id: getId(),
           type: "messengerVideoVue",
-          number: "Card Image Comment",
+          number: "Card Video Comment",
           video_url: "",
           link: "",
           buttons: [],
@@ -154,7 +154,9 @@ const onDrop = (dropResult) => {
   <div class="container-editor">
     <div class="message-editor">
       <Container class="elements-display" @drop="onDrop" orientation="vertical">
-        <messageRendererVue :id="id"></messageRendererVue>
+        <!-- Vue-flow 1.5.0 Doesn't allow Handle having the same Id to exist -->
+        <!-- The simple fix to that is not to display handle on the message editor (drill editor props) -->
+        <messageRendererVue :id="id" :editor="true"></messageRendererVue>
       </Container>
       <div class="elements-adder">
         <div class="element" @click="addElement('messengerTextVue')">

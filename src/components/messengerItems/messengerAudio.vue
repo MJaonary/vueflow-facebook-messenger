@@ -1,6 +1,6 @@
 <script setup>
 import { ref, computed } from "vue";
-import { Handle, Position, useVueFlow } from "@braks/vue-flow";
+import { Handle, Position, useVueFlow } from "@vue-flow/core";
 
 // Simple Id Generator for basic Usage.
 import getId from "../../utils/radomId";
@@ -41,6 +41,7 @@ const transparent = ref(true);
 const props = defineProps({
   mid: String,
   id: String,
+  editor: Boolean,
 });
 
 // Default image value :
@@ -60,6 +61,7 @@ const default_image_src_value =
   >
     <!-- Handle for registering comments -->
     <Handle
+      v-if="props.editor === false"
       :id="id + 'comment'"
       class="handle"
       type="input"

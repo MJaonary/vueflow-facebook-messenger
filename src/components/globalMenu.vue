@@ -2,7 +2,7 @@
 import { ref } from "vue";
 
 import SidebarVue from "./Sidebar.vue";
-import { useVueFlow } from "@braks/vue-flow";
+import { useVueFlow } from '@vue-flow/core'
 import { saveAs } from "file-saver";
 
 import getDateAsString from "../utils/getDateasString";

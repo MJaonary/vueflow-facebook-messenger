@@ -1,6 +1,6 @@
 <script setup>
 import { ref, computed, onMounted } from "vue";
-import { Handle, Position } from "@braks/vue-flow";
+import { Handle, Position } from "@vue-flow/core";
 
 // Simple Id Generator for basic Usage.
 import getId from "../../utils/radomId";
@@ -86,6 +86,7 @@ const transparent = ref(true);
 const props = defineProps({
   mid: String,
   id: String,
+  editor: Boolean,
 });
 ////////////////////////////////////////////.
 </script>
@@ -101,6 +102,7 @@ const props = defineProps({
   >
     <!-- Handle for registering comments -->
     <Handle
+      v-if="props.editor === false"
       :id="id + 'comment'"
       class="handle"
       type="input"

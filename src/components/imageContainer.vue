@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed, watch } from "vue";
 
-import { Handle, Position } from "@braks/vue-flow";
+import { Handle, Position } from '@vue-flow/core'
 
 // Icons
 import sunIcon from "../assets/svg/sunIcon.svg";

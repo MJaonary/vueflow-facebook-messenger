@@ -1,6 +1,6 @@
 <script setup>
 import { ref, computed, watch } from "vue";
-import { Handle, Position } from "@braks/vue-flow";
+import { Handle, Position } from '@vue-flow/core'
 
 import messageRendererVue from "./messageRenderer.vue";
 
@@ -103,7 +103,7 @@ const props = defineProps({
         </div>
       </div>
       <div class="content">
-        <messageRendererVue :id="id"></messageRendererVue>
+        <messageRendererVue :id="id" :key="id"></messageRendererVue>
       </div>
     </div>
   </div>

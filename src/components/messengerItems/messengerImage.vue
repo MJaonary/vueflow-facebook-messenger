@@ -1,6 +1,6 @@
 <script setup>
 import { ref, computed } from "vue";
-import { Handle, Position, useVueFlow } from "@braks/vue-flow";
+import { Handle, Position, useVueFlow } from "@vue-flow/core";
 
 // Simple Id Generator for basic Usage.
 import getId from "../../utils/radomId";
@@ -30,6 +30,10 @@ let localItems = computed(() => {
 
 let localButtons = computed(() => {
   return localItems.value?.buttons;
+});
+
+const default_image_src_value = computed(() => {
+  return store.getDefaultValues().image;
 });
 ////////////////////////////////////////////.
 
@@ -79,10 +83,8 @@ const transparent = ref(true);
 const props = defineProps({
   mid: String,
   id: String,
+  editor: Boolean,
 });
-// Default image value :
-const default_image_src_value =
-  "https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png";
 ////////////////////////////////////////////.
 </script>
 
@@ -109,6 +111,7 @@ const default_image_src_value =
     >
       <!-- Handle for registering comments -->
       <Handle
+        v-if="props.editor === false"
         :id="id + 'comment'"
         class="handle"
         type="input"
@@ -165,6 +168,7 @@ const default_image_src_value =
           {{ button.text }}
         </div>
         <Handle
+          v-if="props.editor === false"
           :id="button.id + 'right'"
           class="handle"
           type="input"

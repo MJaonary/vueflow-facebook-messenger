@@ -1,18 +1,13 @@
 <script>
 // Importing vueflow specific stylesheet
-import "@braks/vue-flow/dist/style.css";
-import "@braks/vue-flow/dist/theme-default.css";
+import "@vue-flow/core/dist/style.css";
+import "@vue-flow/core/dist/theme-default.css";
 ////////////////////////////////////////////.
 </script>
 
 <script setup>
-import {
-  MiniMap,
-  Background,
-  Controls,
-  VueFlow,
-  useVueFlow,
-} from "@braks/vue-flow";
+import { VueFlow, useVueFlow } from "@vue-flow/core";
+import { Background, Controls, MiniMap } from "@vue-flow/additional-components";
 import { onMounted, ref } from "vue";
 
 import container from "./components/container.vue";
@@ -37,7 +32,7 @@ import customEdgeVue from "./components/customEdge.vue";
 ////////////////////////////////////////////.
 
 // Externalise node creation process on Drop here
-import createVueNode from "./utils/createVueNode";
+import { createVueNode } from "./utils/createVueNode";
 ////////////////////////////////////////////.
 
 // Usage of Store Pinia
@@ -153,7 +148,7 @@ const onChange = (event) => {
   <!-- {{ store }} -->
   <div class="d-flex border" style="height: 100vh">
     <globalMenuVue></globalMenuVue>
-    
+
     <div
       class="m-1 border"
       id="vue_flow"
@@ -251,27 +246,11 @@ body,
   color: #2c3e50;
 }
 
-.messenger-container:hover {
-  cursor: move;
-}
-
+/* Vueflow additional components style */
 .vue-flow__minimap {
   background-color: #2c3e50a6;
   transform: scale(75%);
   transform-origin: bottom right;
-}
-
-.customnodeflow .vue-flow__node-custom {
-  border: 1px solid #777;
-  padding: 10px;
-  border-radius: 10px;
-  background: whitesmoke;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  align-items: center;
-  gap: 10px;
-  max-width: 250px;
 }
 
 .customnodeflow button {
@@ -289,13 +268,7 @@ body,
   transition: 0.25s all ease;
 }
 
-.animated-bg-gradient {
-  background: linear-gradient(122deg, #6f3381, #81c7d4, #fedfe1, #fffffb);
-  background-size: 800% 800%;
-  -webkit-animation: gradient 4s ease infinite;
-  animation: gradient 4s ease infinite;
-}
-
+/* VueFlow Specifics */
 .vue-flow {
   background-color: #f2f5f7;
 }
@@ -304,7 +277,20 @@ body,
   z-index: 9999 !important;
 }
 
+/* Customize Handle */
 .handle {
   cursor: pointer !important;
+}
+
+/* Class used to select Control and Control Button */
+.vue-flow__controls {
+  background-color: white;
+  padding: 0.15rem;
+  border-radius: 1rem;
+}
+
+.vue-flow__controls-button {
+  margin: 0.15rem;
+  border: 1px grey solid;
 }
 </style>

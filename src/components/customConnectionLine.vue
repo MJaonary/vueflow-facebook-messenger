@@ -26,7 +26,7 @@ const props = defineProps({
       fill="none"
       stroke="#6F3381"
       :stroke-width="5"
-      :d="`M${sourceX},${sourceY} C ${sourceX} ${targetY} ${sourceX} ${targetY} ${targetX},${targetY}`"
+      :d="`M${sourceX}, ${sourceY} C ${sourceX} ${targetY} ${sourceX} ${targetY} ${targetX}, ${targetY}`"
     />
     <circle :cx="targetX" :cy="targetY" fill="#fff" :r="5" stroke="#6F3381" :stroke-width="1.5" />
   </g>

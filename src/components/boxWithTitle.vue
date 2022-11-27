@@ -1,6 +1,6 @@
 <script setup>
 import { ref, computed, watch, onMounted } from "vue";
-import { Handle, Position } from "@braks/vue-flow";
+import { Handle, Position } from '@vue-flow/core'
 
 // custom Top Menu import
 import topMenu from "./topMenu.vue";
