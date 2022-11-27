@@ -4,7 +4,7 @@ import { ref, computed, watch } from "vue";
 import { Handle, Position } from '@vue-flow/core'
 
 // Icons
-import sunIcon from "../assets/svg/sunIcon.svg";
+import moonStar from "../assets/svg/moonStar.svg";
 
 // Vue resizable, the main component used for resizing nodes
 import VueResizable from "vue-resizable";
@@ -63,7 +63,7 @@ const default_image_src_value =
     <div class="label">
       <input type="text" v-model="localStates.label" />
       <!-- Delete Button and color controls Menu -->
-      <sunIcon
+      <moonStar
         style="
           position: absolute;
           left: -10%;
