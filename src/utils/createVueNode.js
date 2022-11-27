@@ -166,10 +166,13 @@ const copyVueNode = (addNodes, eid, getNode, store) => {
       (item) => item.id === eid
     ); // Get all the old message info
 
-    state.layers.messages.push({
-      ...currentMessage[0],
-      id: type + id,
-    }); // Add it to the store, with a new id
+    state.layers.messages = [
+      ...state.layers.messages,
+      {
+        ...JSON.parse(JSON.stringify(currentMessage))[0], // The element is copied by reference do we need to dereference it
+        id: type + id,
+      },
+    ];
   });
 
   addNodes([
