@@ -13,7 +13,7 @@ const createVueNode = (event, addNodes, project, store) => {
     label: `${type} node`,
   };
 
-  ////////////////////////////////////////////.
+  //////////////////////////////////////////.
   switch (type) {
     case "facebook-message":
       store.$patch((state) => {
@@ -137,7 +137,7 @@ const createVueNode = (event, addNodes, project, store) => {
     default:
       break;
   }
-  ////////////////////////////////////////////.
+  //////////////////////////////////////////.
 
   // Implementation of a basic container catching
   if (event.target.parentNode.id.substring(-1, 9) === "container") {
@@ -148,4 +148,38 @@ const createVueNode = (event, addNodes, project, store) => {
   addNodes([newNode]);
 };
 
-export default createVueNode;
+const copyVueNode = (addNodes, eid, getNode, store) => {
+  let id = getId(); // Create a New UUid
+  const nodeById = getNode.value(eid); // Get The node to copy by its Id (eid)
+
+  const type = nodeById.type; // Get the node's type
+  // When we copy, we need to create it above the old one (translate +50 x y)
+  const position = {
+    ...nodeById.position,
+    x: nodeById.position.x + 50,
+    y: nodeById.position.y - 50,
+  };
+
+  // Create a new message in the store
+  store.$patch((state) => {
+    const currentMessage = state.layers.messages.filter(
+      (item) => item.id === eid
+    ); // Get all the old message info
+
+    state.layers.messages.push({
+      ...currentMessage[0],
+      id: type + id,
+    }); // Add it to the store, with a new id
+  });
+
+  addNodes([
+    {
+      id: type + id,
+      type,
+      position,
+      label: `${type} node`,
+    },
+  ]);
+};
+
+export { createVueNode, copyVueNode };
