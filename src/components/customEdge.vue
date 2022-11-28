@@ -169,15 +169,6 @@ const path = computed(() => {
       validated(Q2 || Q3);
       return getBezierPath(props);
     } else if (props.targetPosition === "bottom") {
-      validated(Q2);
-      return [
-        `M ${props.sourceX}, ${props.sourceY} 
-        C ${props.targetX}, ${props.sourceY} 
-        ${props.targetX}, ${props.targetY} 
-        ${props.targetX}, ${props.targetY}`,
-        props.sourceX - 25,
-        props.sourceY,
-      ];
     } else {
     }
 
@@ -190,7 +181,6 @@ const path = computed(() => {
       }
       validated(Q1 || Q4);
     } else if (props.targetPosition === "right") {
-      validated(false);
     } else if (props.targetPosition === "bottom") {
       validated(Q1);
     } else {
