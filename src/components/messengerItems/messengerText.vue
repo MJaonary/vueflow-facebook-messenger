@@ -107,7 +107,7 @@ const props = defineProps({
       class="handle"
       type="input"
       :position="Position.Left"
-      style="top: 10%; left: -3.5% !important"
+      style="top: 10%; left: -3.5%"
     />
     <!-- Handle for registering comments -->
 

@@ -9,7 +9,7 @@ export const useStore = defineStore("main", {
         messages: [],
         default_values: {
           image:
-            "https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png",
+            "https://images.unsplash.com/photo-1545703399-4313b14625d9?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxleHBsb3JlLWZlZWR8NHx8fGVufDB8fHx8&w=1000&q=80",
           video:
             "https://drive.google.com/uc?export=view&confirm=yTib&id=1g8uCFA1CDKMvVsPwb8V8ayk-3Mop3_Hu",
         },

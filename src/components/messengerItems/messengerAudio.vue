@@ -43,10 +43,6 @@ const props = defineProps({
   id: String,
   editor: Boolean,
 });
-
-// Default image value :
-const default_image_src_value =
-  "https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png";
 ////////////////////////////////////////////.
 </script>
 

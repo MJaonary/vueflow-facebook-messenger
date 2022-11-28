@@ -107,7 +107,7 @@ const onDragStart = (event, nodeType) => {
           </div>
           <div style="width: 100%">
             <div class="text-header">Vue Flow</div>
-            Google Embed Frame
+            Simple Iframe
           </div>
         </div>
       </div>

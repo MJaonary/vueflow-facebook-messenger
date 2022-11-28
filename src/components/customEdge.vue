@@ -66,14 +66,14 @@ const getRightLefttEdge = (props) => {
   M ${props.sourceX - 7.5} ${props.sourceY}
   L ${props.sourceX + 15} ${props.sourceY}
 
-  Q ${props.sourceX + 30} ${props.sourceY}  
+  Q ${props.sourceX + 30} ${props.sourceY}
   ${props.sourceX + 30} ${
       props.sourceY + (props.sourceY > props.targetY ? -15 : +15)
     }
   L ${props.sourceX + 30} ${
       props.targetY - (props.sourceY > props.targetY ? 45 : 75)
     }
-  Q ${props.sourceX + 30} ${props.targetY - 60} 
+  Q ${props.sourceX + 30} ${props.targetY - 60}
    ${props.sourceX + 15} ${props.targetY - 60}
   L ${props.targetX - 30} ${props.targetY - 60}
   Q ${props.targetX - 45} ${props.targetY - 60}
@@ -102,12 +102,23 @@ const getBottomLeftEdge = (props) => {
   L ${props.targetX - 30} ${
       props.targetY + parseInt(props.sourceY < props.targetY - 30 ? -15 : 15)
     }
-  Q  ${props.targetX - 30} ${props.targetY} 
+  Q  ${props.targetX - 30} ${props.targetY}
     ${props.targetX - 15} ${props.targetY}
   L ${props.targetX} ${props.targetY}
 `,
     props.targetX - 15,
     props.targetY,
+  ];
+};
+
+const getLeftLeftEdge = (props) => {
+  return [
+    `M ${props.sourceX}, ${props.sourceY}
+     C ${props.targetX}, ${props.sourceY}
+     ${props.targetX}, ${props.targetY}
+    ${props.targetX}, ${props.targetY}`,
+    props.sourceX - 25,
+    props.sourceY,
   ];
 };
 
@@ -139,6 +150,8 @@ const validated = (validation) => {
 };
 
 const path = computed(() => {
+  /* Q1, Q2, Q3, Q4 stands for Quandrants, the plane is divided by 4 zones.
+  Primary axis are vertical and horizontal axis passing through the point (sourceX, sourceY)*/
   const [Q1, Q2, Q3, Q4] = [
     props.sourceX < props.targetX && props.sourceY > props.targetY,
     props.sourceX > props.targetX && props.sourceY > props.targetY,
@@ -148,22 +161,20 @@ const path = computed(() => {
 
   if (props.sourcePosition === "left") {
     if (props.targetPosition === "left") {
-      validated(Q2); // TODO : Validate Q3
-      return [
-        `M ${props.sourceX}, ${props.sourceY} 
-        C ${props.targetX}, ${props.sourceY + props.targetY} 
-        ${props.targetX - props.sourceX / 8}, ${props.targetY + props.sourceY / 8} 
-        ${props.targetX}, ${props.targetY}`,
-        props.sourceX - 25,
-        props.sourceY,
-      ];
+      validated(Q1 || Q2 || Q4);
+      if (Q2) {
+        return getLeftLeftEdge(props);
+      }
     } else if (props.targetPosition === "right") {
       validated(Q2 || Q3);
       return getBezierPath(props);
     } else if (props.targetPosition === "bottom") {
       validated(Q2);
       return [
-        `M ${props.sourceX}, ${props.sourceY} C ${props.targetX}, ${props.sourceY} ${props.targetX}, ${props.targetX} ${props.targetX}, ${props.targetY}`,
+        `M ${props.sourceX}, ${props.sourceY} 
+        C ${props.targetX}, ${props.sourceY} 
+        ${props.targetX}, ${props.targetY} 
+        ${props.targetX}, ${props.targetY}`,
         props.sourceX - 25,
         props.sourceY,
       ];
@@ -173,10 +184,11 @@ const path = computed(() => {
     return getCurvedEdge(props);
   } else if (props.sourcePosition === "right") {
     if (props.targetPosition === "left") {
-      if (/right-redirector/.test(props.id)) { // Redirector Edge
+      if (/right-redirector/.test(props.id) && (Q2 || Q3)) {
+        // Redirector Edge
         return getRightLefttEdge(props);
       }
-      validated(Q1 || Q4); 
+      validated(Q1 || Q4);
     } else if (props.targetPosition === "right") {
       validated(false);
     } else if (props.targetPosition === "bottom") {

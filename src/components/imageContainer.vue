@@ -20,6 +20,10 @@ const store = useStore();
 let localStates = computed(() => {
   return store.getMessageById(props.id);
 });
+
+const default_image_src_value = computed(() => {
+  return store.getDefaultValues().image;
+});
 ////////////////////////////////////////////.
 
 // Resize method specific to VueResizable
@@ -43,9 +47,6 @@ const props = defineProps({
   id: String,
   selected: Boolean,
 });
-// Default image value :
-const default_image_src_value =
-  "https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png";
 ////////////////////////////////////////////.
 </script>
 
@@ -170,7 +171,6 @@ const default_image_src_value =
 img {
   width: 100%;
   height: 100%;
-  padding: 5px;
 }
 
 .label {

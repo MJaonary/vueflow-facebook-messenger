@@ -20,10 +20,6 @@ const store = useStore();
 let localStates = computed(() => {
   return store.getMessageById(props.id);
 });
-
-const default_image_src_value = computed(() => {
-  return store.getDefaultValues();
-});
 ////////////////////////////////////////////.
 
 // Resize method specific to VueResizable
@@ -98,7 +94,10 @@ const props = defineProps({
       @resize:end="resize($event)"
       style="background-color: white"
     >
-      <iframe :src="localStates.src" :title="id + 'iframeView'"></iframe>
+      <iframe
+        :src="localStates.src"
+        :title="id + 'iframeView'"
+      ></iframe>
       <input
         class="iframe_source_input"
         type="text"

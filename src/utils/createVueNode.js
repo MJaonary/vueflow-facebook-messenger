@@ -78,8 +78,8 @@ const createVueNode = (event, addNodes, project, store) => {
           type: "node-image",
           label: "Label",
           src: "",
-          width: "300px",
-          height: "120px",
+          width: "340px",
+          height: "240px",
           color: "#000000",
         });
       });
@@ -92,8 +92,8 @@ const createVueNode = (event, addNodes, project, store) => {
           type: "free-mind",
           label: "Label",
           src: "",
-          width: "25em",
-          height: "14em",
+          width: "340px",
+          height: "240px",
           color: "#40CE03",
         });
       });

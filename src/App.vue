@@ -10,6 +10,9 @@ import { VueFlow, useVueFlow } from "@vue-flow/core";
 import { Background, Controls, MiniMap } from "@vue-flow/additional-components";
 import { onMounted, ref } from "vue";
 
+// Initials Elements
+import { initialElements } from "./assets/initial-elements";
+
 import container from "./components/container.vue";
 
 // Manychat Copy Components.
@@ -17,7 +20,7 @@ import startingStep from "./components/startingStep.vue";
 import facebookMessage from "./components/facebookMessage.vue";
 import messageEditorVue from "./components/messageEditor.vue";
 import messengerQuickReplyVue from "./components/messengerQuickReply.vue";
-import freeMindVue from "./components/freeMind.vue";
+import iframeVue from "./components/iframe.vue";
 import imageContainerVue from "./components/imageContainer.vue";
 import boxWithTitleVue from "./components/boxWithTitle.vue";
 import simpleTextVue from "./components/simpleText.vue";
@@ -128,7 +131,7 @@ onMounted(() => {
 
 // Local Variables and props related things.
 let messageToEdit = ref("");
-const elements = ref([]);
+const elements = ref(initialElements);
 ////////////////////////////////////////////.
 
 // Removing data from the message store if delete button used
@@ -202,7 +205,7 @@ const onChange = (event) => {
           <messengerQuickReplyVue :id="props.id" :selected="props.selected" />
         </template>
         <template #node-free-mind="props">
-          <freeMindVue :id="props.id" :selected="props.selected" />
+          <iframeVue :id="props.id" :selected="props.selected" />
         </template>
         <template #node-node-image="props">
           <imageContainerVue :id="props.id" :selected="props.selected" />
