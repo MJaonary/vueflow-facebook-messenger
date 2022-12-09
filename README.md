@@ -94,5 +94,5 @@ This project is built with
 - [vue-flow](https://github.com/bcakmakoglu/vue-flow)
   - Vue flow made possible building this tool by simplifing everything.
 
-- [vue-smooth-dbd](https://github.com/kutlugsahin/vue-smooth-dnd)
+- [vue-smooth-dnd](https://github.com/kutlugsahin/vue-smooth-dnd)
   - This tools helped with the Drag and Drop Functionality. 
