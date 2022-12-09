@@ -2,11 +2,13 @@
   "name": "vue-flowchart",
   "private": true,
   "version": "0.0.1",
+  "author": "Rajaonarivony Lantonirina Onitiana Mamisoa <ramamilanto@gmail.com>",
   "scripts": {
     "dev": "vite --host",
     "build": "vite build",
     "preview": "vite preview --host"
   },
+  "license": "MIT",
   "dependencies": {
     "@vue-flow/additional-components": "^1.3.0",
     "@vue-flow/core": "^1.5.0",

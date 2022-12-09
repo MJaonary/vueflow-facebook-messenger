@@ -1,6 +1,6 @@
 <script setup>
 import { ref, computed, watch } from "vue";
-import { Handle, Position } from '@vue-flow/core'
+import { Handle, Position } from "@vue-flow/core";
 
 import messageRendererVue from "./messageRenderer.vue";
 
@@ -69,7 +69,6 @@ const props = defineProps({
     @mouseenter="transparent = false"
     @mouseleave="transparent = true"
     class="d-flex flex-column align-items-center"
-    style="background-color: white"
   >
     <div class="label">
       <input type="text" v-model="localStates.label" />
@@ -94,7 +93,7 @@ const props = defineProps({
           <div style="width: 2rem; height: 2rem">
             <Messenger />
           </div>
-          <div class="p-2 starting-step-header d-flex flex-column">
+          <div class="p-2 d-flex flex-column">
             <div style="font-size: x-small; color: #7e8c9e; height: 8px">
               Facebook
             </div>
@@ -180,13 +179,15 @@ const props = defineProps({
 .main-container {
   max-width: calc(23rem + 6px);
   border: 2px solid black;
-  border-top: 2px transparent;
+  border-top: 0px;
   border-bottom-right-radius: 1rem;
   border-bottom-left-radius: 1rem;
+  margin-top: -1px;
   box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
 }
 .main-container:hover {
-  border: 3px #0084ff solid;
+  border: 2px #0084ff solid;
+  border-top: 0px;
   border-bottom-right-radius: 1rem;
   border-bottom-left-radius: 1rem;
 }
@@ -197,8 +198,6 @@ const props = defineProps({
   border-bottom: 1px solid #eee;
 }
 .starting-step {
-  border-top-left-radius: 1rem;
-  border-top-right-radius: 1rem;
   background-color: white;
   width: 23rem;
   height: 3rem;

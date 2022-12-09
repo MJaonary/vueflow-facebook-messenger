@@ -1,6 +1,6 @@
 <script setup>
 import { ref, computed, watch } from "vue";
-import { Handle, Position } from '@vue-flow/core'
+import { Handle, Position } from "@vue-flow/core";
 
 // Simple Id Generator for basic Usage.
 import getId from "../utils/radomId.js";
@@ -89,7 +89,6 @@ const props = defineProps({
     @mouseenter="transparent = false"
     @mouseleave="transparent = true"
     class="d-flex flex-column align-items-center"
-    style="background-color: white;"
     :style="{ borderColor: selectedColor ? 'red' : '' }"
   >
     <div class="label">
@@ -252,8 +251,9 @@ const props = defineProps({
 }
 .main-container {
   max-width: calc(18rem + 6px);
+  margin-top: -1px;
   border: 2px solid black;
-  border-top: 2px transparent;
+  border-top: 0px;
   border-bottom-right-radius: 1rem;
   border-bottom-left-radius: 1rem;
   box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
@@ -264,8 +264,6 @@ const props = defineProps({
   border-bottom-left-radius: 1rem;
 }
 .starting-step {
-  border-top-left-radius: 1rem;
-  border-top-right-radius: 1rem;
   background-color: white;
   width: 18rem;
   height: 3rem;

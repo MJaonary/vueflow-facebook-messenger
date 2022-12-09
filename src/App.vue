@@ -224,15 +224,28 @@ const onChange = (event) => {
     </div>
 
     <!-- Message Editor extension -->
-    <messageEditorVue
-      v-if="messageToEdit != ''"
-      :id="messageToEdit"
-    ></messageEditorVue>
+    <Transition name="fade">
+      <messageEditorVue
+        v-if="messageToEdit != ''"
+        :id="messageToEdit"
+      ></messageEditorVue>
+    </Transition>
+
     <!-- Message Editor extension -->
   </div>
 </template>
 
 <style>
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 1s 0.1s;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
 html,
 body,
 #app {

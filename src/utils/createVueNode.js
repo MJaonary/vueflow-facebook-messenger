@@ -26,7 +26,7 @@ const createVueNode = (event, addNodes, project, store) => {
             {
               id: getId(),
               type: "messengerTextVue",
-              text: "Entre le Message",
+              text: "Enter Message Text",
               buttons: [],
             },
           ],
