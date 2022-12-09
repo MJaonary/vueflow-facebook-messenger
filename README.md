@@ -23,10 +23,10 @@ https://www.baiboly.site/apps/messenger-flowchart
 
 * `Simple Text` : A node that is used as simple text container.
 * `Box with title` : As the previous node, this one has two more inputs, and a label and a title.
-* `Container` : This components has many special features, it cas be used as a parent to other components. Dragging directly a node from the sidebar into its body will set this one as the dragged node's parent. As described in [vue-flow](https://github.com/bcakmakoglu/vue-flow) docs when a parent container move, all of it's childs will move along him, it is possible to dynamicaly set and unset the parent of a child by using the `Menu` that is displayed when the element is hovered.
+* `Container` : **[Resizable]** This components has many special features, it cas be used as a parent to other components. Dragging directly a node from the sidebar into its body will set this one as the dragged node's parent. As described in [vue-flow](https://github.com/bcakmakoglu/vue-flow) docs when a parent container move, all of it's childs will move along him, it is possible to dynamicaly set and unset the parent of a child by using the `Menu` that is displayed when the element is hovered.
 * `Redirector Edge` : The use case of this node is to redirect the edge from the right hanlde of a node to it's left Handle, so it is possible to get a better control on how the flow returns back in the diagram.
-* `Simple Iframe` : [vue-flow](https://github.com/bcakmakoglu/vue-flow) is a tool that helps us to dynamicaly move DOM elements in the view, so all elements that exists can be used as a custom node, this one is a simple iFrame that accept links as Dynamic input.
-* `Image` : It is possible to display an image directly in a custom node, as we stated earlier, the example of a Vide is shown in the secondary components inside a Facebook Message node.
+* `Simple Iframe` : **[Resizable]** [vue-flow](https://github.com/bcakmakoglu/vue-flow) is a tool that helps us to dynamicaly move DOM elements in the view, so all elements that exists can be used as a custom node, this one is a simple iFrame that accept links as Dynamic input.
+* `Image` : **[Resizable]** It is possible to display an image directly in a custom node, as we stated earlier, the example of a Vide is shown in the secondary components inside a Facebook Message node.
 * `Starting Step` : A simple node that helps to describe a step that will trigger a Message, or everything else.
 * `Send Message` : This node displays secondary components inside it, we can toggle the `Message Editor` by double clicking the node itself.
 * `Quick Reply` : This components will display a Quick Reply like node.
