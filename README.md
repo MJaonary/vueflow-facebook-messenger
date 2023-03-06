@@ -4,10 +4,6 @@
 This app is an example of how to use [vue-flow](https://github.com/bcakmakoglu/vue-flow) with [Pinia](https://pinia.vuejs.org/) store, to create a flow with custom components, its main purpose is to create
 flowchart that helps to describe Facebook Messenger bot action. The flowchart and all of its data can be exported and imported to simple text file. The project is just at it's begining but many functionnality will be implemented.
 
-## Demo
-A functional demo of the App can be found on : 
-https://www.baiboly.site/apps/messenger-flowchart
-
 ## How It Works
 
 - **Nodes** can be dragged from the sidebar and dropped into the view.
