@@ -1,15 +1,26 @@
 <script setup>
 import { ref, computed, watch, onMounted } from "vue";
-import { Handle, Position } from '@vue-flow/core'
+import { Handle, Position } from '@vue-flow/core';
+
+// Importing Store Pinia
+import { useStore } from "../stores/main.js";
 
 // custom Top Menu import
 import topMenu from "./topMenu.vue";
 
+// Local variables and props declaration
+const transparent = ref(true);
+let selectedColor = ref(false);
+const props = defineProps({
+  id: String,
+  selected: Boolean,
+});
+////////////////////////////////////////////.
+
 // Usage of Store Pinia
-import { useStore } from "../stores/main.js";
 const store = useStore();
 
-// Computed Values from Store.
+// Computed Values from Store
 let localStates = computed(() => {
   return store.getMessageById(props.id);
 });
@@ -18,9 +29,9 @@ let localStates = computed(() => {
 // Renderless resizable textarea
 const textarea = ref(null); // Access the textarea by his ref.
 
-const resizeTextarea = (event) => {
-  event.target.style.height = "auto";
-  event.target.style.height = event.target.scrollHeight + 4 + "px";
+const resizeTextarea = ($event) => {
+  $event.target.style.height = "auto";
+  $event.target.style.height = $event.target.scrollHeight + 4 + "px";
 };
 
 onMounted(() => {
@@ -28,63 +39,43 @@ onMounted(() => {
 });
 ////////////////////////////////////////////.
 
-// Watching Selected Manual event.
+// Watching Selected Manual event
 watch(
   () => props.selected,
   (isSelected) => (selectedColor.value = isSelected)
 );
 ////////////////////////////////////////////.
 
-// Local Variables and props related things.
-const transparent = ref(true);
-let selectedColor = ref(false);
-const props = defineProps({
-  id: String,
-  selected: Boolean,
-});
-////////////////////////////////////////////.
+const sourceHandleStyleB = computed(() => ({
+  backgroundColor: 'red',
+  filter: 'invert(100%)',
+  bottom: '10px',
+  top: 'auto',
+}));
 </script>
 
 <template>
   <!-- Handle for different utilities -->
-  <Handle id="right" class="handle" type="input" :position="Position.Right" />
-  <Handle id="left" class="handle" type="input" :position="Position.Left" />
-  <Handle
-    id="bottom"
-    class="handle"
-    type="input"
-    :position="Position.Bottom"
-    style="top: 101%"
-  />
+  <Handle id="right" class="handle" type="source" :position="Position.Right" />
+  <Handle id="left" class="handle" type="target" :position="Position.Left" />
+  <Handle id="bottom" class="handle" type="target" :position="Position.Bottom" style="top: 101%" />
   <!-- Handle for different utilities -->
 
-  <div
-    @mouseenter="transparent = false"
-    @mouseleave="transparent = true"
-    class="d-flex flex-column align-items-center"
-  >
+  <div @mouseenter="transparent = false" @mouseleave="transparent = true" class="d-flex flex-column align-items-center">
     <!-- Delete Button and color controls Menu -->
     <topMenu :eid="props.id" :transparent="transparent"></topMenu>
     <!-- Delete Button and color controls Menu -->
 
-    <div
-      class="main-container"
-      :style="{
-        border: selectedColor
-          ? '3px red solid'
-          : `3px ${localStates.color} solid`,
-      }"
-    >
+    <div class="main-container" :style="{
+      border: selectedColor
+        ? '3px red solid'
+        : `3px ${localStates.color} solid`,
+    }">
       <div class="content">
         <!-- Subtitle part -->
-        <textarea
-          :id="id + 'subtitle'"
-          ref="textarea"
-          v-model="localStates.subtitle"
-          @input="resizeTextarea"
-        >
-          {{ localStates.subtitle }}
-        </textarea>
+        <textarea :id="id + 'subtitle'" ref="textarea" v-model="localStates.subtitle" @input="resizeTextarea">
+            {{ localStates.subtitle }}
+          </textarea>
         <!-- Subtitle part -->
       </div>
     </div>
@@ -106,6 +97,7 @@ textarea {
   border: 2px rgb(203, 203, 203) dashed;
   outline: transparent;
 }
+
 .content {
   display: flex;
   flex-direction: column;
@@ -117,6 +109,7 @@ textarea {
   border-radius: 1rem;
   cursor: pointer;
 }
+
 .handle {
   background-color: white;
   width: 1rem;
@@ -125,6 +118,7 @@ textarea {
   position: absolute;
   top: 5.1rem;
 }
+
 .handle:hover {
   width: 1.3rem;
   height: 1.3rem;
@@ -137,6 +131,7 @@ textarea {
   border-radius: 1rem;
   box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
 }
+
 .main-container:hover {
   border: 3px solid #d5cb07;
   border-radius: 1rem;

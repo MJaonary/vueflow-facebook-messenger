@@ -1,9 +1,11 @@
 <script setup>
 import { ref, computed, watch } from "vue";
-
 import { Handle, Position } from "@vue-flow/core";
 
-// Icons
+// Importing Store Pinia
+import { useStore } from "../stores/main.js";
+
+// Importing SVG icons
 import sunIcon from "../assets/svg/sunIcon.svg";
 
 // Vue resizable, the main component used for resizing nodes
@@ -12,11 +14,19 @@ import VueResizable from "vue-resizable";
 // custom Top Menu import
 import topMenu from "./topMenu.vue";
 
+// Local variables and props declaration.
+const transparent = ref(true);
+let selectedColor = ref(false);
+const props = defineProps({
+  id: String,
+  selected: Boolean,
+});
+////////////////////////////////////////////.
+
 // Usage of Store Pinia
-import { useStore } from "../stores/main.js";
 const store = useStore();
 
-// Computed Values from Store.
+// Computed Values from Store
 let localStates = computed(() => {
   return store.getMessageById(props.id);
 });
@@ -29,20 +39,11 @@ const resize = (event) => {
 };
 ////////////////////////////////////////////.
 
-// Watching Selected Manual event.
+// Watching Selected Manual event
 watch(
   () => props.selected,
   (isSelected) => (selectedColor.value = isSelected)
 );
-////////////////////////////////////////////.
-
-// Local Variables and props related things.
-const transparent = ref(true);
-let selectedColor = ref(false);
-const props = defineProps({
-  id: String,
-  selected: Boolean,
-});
 ////////////////////////////////////////////.
 </script>
 
@@ -109,21 +110,21 @@ const props = defineProps({
     <Handle
       :id="id + 'left'"
       class="handle"
-      type="input"
+      type="target"
       :position="Position.Left"
       style="top: 50%; left: -1.5%"
     />
     <Handle
       :id="id + 'right'"
       class="handle"
-      type="input"
+      type="source"
       :position="Position.Right"
       style="top: 50%; right: -1.5%"
     />
     <Handle
       :id="id + 'bottom'"
       class="handle"
-      type="input"
+      type="source"
       :position="Position.Bottom"
       style="top: 100.5%"
     />

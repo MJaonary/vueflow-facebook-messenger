@@ -185,4 +185,7 @@ const copyVueNode = (addNodes, eid, getNode, store) => {
   ]);
 };
 
-export { createVueNode, copyVueNode };
+export {
+  createVueNode,
+  copyVueNode
+};

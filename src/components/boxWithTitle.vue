@@ -1,12 +1,23 @@
 <script setup>
 import { ref, computed, watch, onMounted } from "vue";
-import { Handle, Position } from '@vue-flow/core'
+import { Handle, Position } from '@vue-flow/core';
+
+// Importing Store Pinia
+import { useStore } from "../stores/main.js";
 
 // custom Top Menu import
 import topMenu from "./topMenu.vue";
 
+// Local variables and props declaration
+const transparent = ref(true);
+let selectedColor = ref(false);
+const props = defineProps({
+  id: String,
+  selected: Boolean,
+});
+////////////////////////////////////////////.
+
 // Usage of Store Pinia
-import { useStore } from "../stores/main.js";
 const store = useStore();
 
 // Computed Values from Store.
@@ -18,9 +29,9 @@ let localStates = computed(() => {
 // Renderless resizable textarea
 const textarea = ref(null); // Access the textarea by his ref.
 
-const resizeTextarea = (event) => {
-  event.target.style.height = "auto";
-  event.target.style.height = event.target.scrollHeight + 4 + "px";
+const resizeTextarea = ($event) => {
+  $event.target.style.height = "auto";
+  $event.target.style.height = $event.target.scrollHeight + 4 + "px";
 };
 
 onMounted(() => {
@@ -28,31 +39,22 @@ onMounted(() => {
 });
 ////////////////////////////////////////////.
 
-// Watching Selected Manual event.
+// Watching Selected Manual event
 watch(
   () => props.selected,
   (isSelected) => (selectedColor.value = isSelected)
 );
 ////////////////////////////////////////////.
-
-// Local Variables and props related things.
-const transparent = ref(true);
-let selectedColor = ref(false);
-const props = defineProps({
-  id: String,
-  selected: Boolean,
-});
-////////////////////////////////////////////.
 </script>
 
 <template>
   <!-- Handle for different utilities -->
-  <Handle id="right" class="handle" type="input" :position="Position.Right" />
-  <Handle id="left" class="handle" type="input" :position="Position.Left" />
+  <Handle id="right" class="handle" type="source" :position="Position.Right" />
+  <Handle id="left" class="handle" type="target" :position="Position.Left" />
   <Handle
     id="bottom"
     class="handle"
-    type="input"
+    type="source"
     :position="Position.Bottom"
     style="top: 101%"
   />

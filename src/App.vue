@@ -2,13 +2,20 @@
 // Importing vueflow specific stylesheet
 import "@vue-flow/core/dist/style.css";
 import "@vue-flow/core/dist/theme-default.css";
+
+// import default control and minimap styles
+import '@vue-flow/controls/dist/style.css';
+import '@vue-flow/minimap/dist/style.css';
 ////////////////////////////////////////////.
 </script>
 
 <script setup>
-import { VueFlow, useVueFlow } from "@vue-flow/core";
-import { Background, Controls, MiniMap } from "@vue-flow/additional-components";
 import { onMounted, ref } from "vue";
+import { VueFlow, useVueFlow } from "@vue-flow/core";
+
+import { Background } from '@vue-flow/background';
+import { Controls } from '@vue-flow/controls';
+import { MiniMap } from '@vue-flow/minimap';
 
 // Initials Elements
 import { initialElements } from "./assets/initial-elements";
@@ -30,7 +37,7 @@ import globalMenuVue from "./components/globalMenu.vue";
 import redirectorEdgeVue from "./components/redirectorEdge.vue";
 
 // Custom Connection line and Custom Edge
-import customConnectionLine from "./components/customConnectionLine.vue";
+import CustomConnectionLine from "./components/CustomConnectionLine.vue";
 import customEdgeVue from "./components/customEdge.vue";
 ////////////////////////////////////////////.
 
@@ -42,8 +49,14 @@ import { createVueNode } from "./utils/createVueNode";
 import { useStore } from "./stores/main.js";
 const store = useStore();
 
-const { setInteractive, onConnect, addEdges, addNodes, project, onPaneReady } =
-  useVueFlow();
+const {
+  addEdges,
+  addNodes,
+  onConnect,
+  onPaneReady,
+  project,
+  setInteractive,
+} = useVueFlow();
 
 // Initialize elements values here.
 // onMounted(() => {
@@ -129,7 +142,7 @@ onMounted(() => {
 });
 ////////////////////////////////////////////.
 
-// Local Variables and props related things.
+// Local variables and props declaration.
 let messageToEdit = ref("");
 const elements = ref(initialElements);
 ////////////////////////////////////////////.
@@ -149,49 +162,34 @@ const onChange = (event) => {
 
 <template>
   <!-- {{ store }} -->
-  <div class="d-flex border" style="height: 100vh">
+  <div class="d-flex" style="height: 100vh">
     <globalMenuVue></globalMenuVue>
 
-    <div
-      class="m-1 border"
-      id="vue_flow"
-      oncontextmenu="return false;"
-      style="position: relative; width: 95%"
-    >
-      <VueFlow
-        v-model="elements"
-        class="customnodeflow"
-        :snap-to-grid="true"
-        :select-nodes-on-drag="true"
-        :only-render-visible-elements="true"
-        :max-zoom="50"
-        :min-zoom="0.05"
-        @dragover="onDragOver"
-        @drop="onDrop"
-        @nodeDoubleClick="onClick"
-        @nodesChange="onChange"
-      >
-        <Background pattern-color="#999" gap="16" size="1.2" />
+    <div class="m-1 border" id="vue_flow" oncontextmenu="return false;" style="position: relative; width: 95%">
+      <VueFlow v-model="elements" class="customnodeflow" :snap-to-grid="true" :select-nodes-on-drag="true"
+        :only-render-visible-elements="true" :max-zoom="50" :min-zoom="0.05" @dragover="onDragOver" @drop="onDrop"
+        @nodeDoubleClick="onClick" @nodesChange="onChange">
+        <Background pattern-color="grey" gap="16" size="1.2" />
 
         <!-- Custom Connection from example -->
-        <template #connection-line="props">
-          <customConnectionLine v-bind="props" />
+        <template #connection-line="{ sourceX, sourceY, targetX, targetY }">
+          <CustomConnectionLine :source-x="sourceX" :source-y="sourceY" :target-x="targetX" :target-y="targetY" />
         </template>
         <!-- Custom Connection from example -->
 
         <!-- Custom Edge from example -->
         <template #edge-custom="props">
-          <customEdgeVue v-bind="props" />
-        </template>
+            <customEdgeVue v-bind="props" />
+          </template>
         <!-- Custom Edge from example -->
 
         <!-- Redirector used as a proxy, for returning edges -->
         <template #node-redirector="props">
-          <redirectorEdgeVue v-bind="props" />
-        </template>
+            <redirectorEdgeVue v-bind="props" />
+          </template>
         <!-- Redirector used as a proxy, for returning edges -->
 
-        <!-- Imported Custom Templates -->
+        <!-- Importing custom templates -->
         <template #node-container="props">
           <container :id="props.id" :selected="props.selected" />
         </template>
@@ -216,7 +214,7 @@ const onChange = (event) => {
         <template #node-simple-text="props">
           <simpleTextVue :id="props.id" :selected="props.selected" />
         </template>
-        <!-- End of importing Custom templates -->
+        <!-- End of importing custom templates -->
 
         <Controls />
         <MiniMap v-show="messageToEdit === ''" />
@@ -225,12 +223,8 @@ const onChange = (event) => {
 
     <!-- Message Editor extension -->
     <Transition name="fade">
-      <messageEditorVue
-        v-if="messageToEdit != ''"
-        :id="messageToEdit"
-      ></messageEditorVue>
+      <messageEditorVue v-if="messageToEdit != ''" :id="messageToEdit"></messageEditorVue>
     </Transition>
-
     <!-- Message Editor extension -->
   </div>
 </template>
@@ -254,19 +248,11 @@ body,
 }
 
 #app {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
-    Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+  font-family: Roboto;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-}
-
-/* Vueflow additional components style */
-.vue-flow__minimap {
-  background-color: #2c3e50a6;
-  transform: scale(75%);
-  transform-origin: bottom right;
 }
 
 .customnodeflow button {
@@ -289,16 +275,21 @@ body,
   background-color: #f2f5f7;
 }
 
-.vue-flow__edges {
+/* .vue-flow__edges {
   z-index: 9999 !important;
-}
+} */
 
 /* Customize Handle */
 .handle {
   cursor: pointer !important;
 }
 
-/* Class used to select Control and Control Button */
+/* Select the MiniMap */
+.vue-flow__minimap {
+  border-radius: 10%;
+}
+
+/* Select Control and Control Button */
 .vue-flow__controls {
   background-color: white;
   padding: 0.15rem;
@@ -306,7 +297,7 @@ body,
 }
 
 .vue-flow__controls-button {
-  margin: 0.15rem;
+  margin: 0.3rem;
   border: 1px grey solid;
 }
 </style>

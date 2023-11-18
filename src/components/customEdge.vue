@@ -7,7 +7,7 @@ import {
 } from "@vue-flow/core";
 import { computed, ref } from "vue";
 
-// Icons
+// Importing SVG icons
 import TrashIcon from "../assets/svg/TrashIcon.svg";
 
 const props = defineProps({
@@ -212,7 +212,7 @@ const path = computed(() => {
   return getDirectLine(props);
 });
 
-// Local Variables and props related things.
+// Local variables and props declaration.
 let strokeColor = ref("#8492a6");
 ////////////////////////////////////////////.
 </script>

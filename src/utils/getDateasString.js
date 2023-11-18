@@ -8,4 +8,4 @@ export default function () {
         date.getMinutes(),
         date.getSeconds(),
     ].join("-");
-}
+};

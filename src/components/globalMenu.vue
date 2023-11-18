@@ -1,8 +1,8 @@
 <script setup>
 import { ref } from "vue";
 
-import SidebarVue from "./Sidebar.vue";
-import { useVueFlow } from '@vue-flow/core'
+import SidebarVue from "./sidebarMenu/Sidebar.vue";
+import { useVueFlow } from '@vue-flow/core';
 import { saveAs } from "file-saver";
 
 import getDateAsString from "../utils/getDateasString";
@@ -84,7 +84,7 @@ const fileSelected = (e) => {
 };
 ////////////////////////////////////////////.
 
-// Local Variables and props related things.
+// Local variables and props declaration.
 let inputFileOne = ref(null);
 let importedFile = ref(null);
 let importedFileName = ref("");
@@ -103,7 +103,7 @@ reader.onload = (e) => {
 </script>
 
 <template>
-  <div class="border rounded w-25">
+  <div class="container rounded w-25">
     <SidebarVue></SidebarVue>
     <div class="border">
       <button class="btn border rounded" @click="onSave">Save</button>
@@ -128,6 +128,11 @@ reader.onload = (e) => {
 </template>
 
 <style scoped>
+.container {
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+
 .file-input label:hover {
   transform: scale(1.02);
 }
@@ -136,7 +141,7 @@ reader.onload = (e) => {
   position: relative;
   width: auto;
   height: 3rem;
-  border-radius: 2rem;
+  border-radius: 1rem;
   padding: 1rem;
   background: linear-gradient(40deg, #297cbc, #16d462);
   box-shadow: 0 4px 7px rgba(0, 0, 0, 0.4);

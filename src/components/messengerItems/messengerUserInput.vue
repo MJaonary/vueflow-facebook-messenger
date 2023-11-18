@@ -2,14 +2,25 @@
 import { ref, computed, onMounted } from "vue";
 import { Handle, Position } from "@vue-flow/core";
 
-// Icons
+// Importing Store Pinia
+import { useStore } from "../../stores/main.js";
+
+// Importing SVG icons
 import TrashIcon from "../../assets/svg/TrashIcon.svg";
 
+// Local variables and props declaration
+const transparent = ref(true);
+const props = defineProps({
+  mid: String,
+  id: String,
+  editor: Boolean,
+});
+////////////////////////////////////////////.
+
 // Usage of Store Pinia
-import { useStore } from "../../stores/main.js";
 const store = useStore();
 
-// Computed Values from Store.
+// Computed Values from Store
 let localStates = computed(() => {
   return store.getMessageById(props.mid);
 });
@@ -23,7 +34,7 @@ let localItems = computed(() => {
 });
 ////////////////////////////////////////////.
 
-// Elements related methods.
+// Elements related methods
 const deleteElement = (id) => {
   localStates.value.items = Items.value.filter((element) => element.id != id);
 };
@@ -32,64 +43,34 @@ const deleteElement = (id) => {
 // Renderless resizable textarea
 const textarea = ref(null); // Access the textarea by his ref.
 
-const resizeTextarea = (event) => {
-  event.target.style.height = "auto";
-  event.target.style.height = event.target.scrollHeight + 4 + "px";
+const resizeTextarea = ($event) => {
+  $event.target.style.height = "auto";
+  $event.target.style.height = $event.target.scrollHeight + 4 + "px";
 };
 
 onMounted(() => {
   textarea.value.style.height = textarea.value.scrollHeight + 4 + "px";
 });
 ////////////////////////////////////////////.
-
-// Local Variables and props related things.
-const transparent = ref(true);
-const props = defineProps({
-  mid: String,
-  id: String,
-  editor: Boolean,
-});
-////////////////////////////////////////////.
 </script>
 
 <template>
-  <div
-    class="messenger-container"
-    @mouseenter="transparent = false"
-    @mouseleave="transparent = true"
-    data-toggle="tooltip"
-    data-placement="left"
-    title="Messenger User Input"
-  >
+  <div class="messenger-container" @mouseenter="transparent = false" @mouseleave="transparent = true"
+    data-toggle="tooltip" data-placement="left" title="Messenger User Input">
     <!-- Handle for registering comments -->
-    <Handle
-      v-if="props.editor === false"
-      :id="id + 'comment'"
-      class="handle"
-      type="input"
-      :position="Position.Left"
-      style="top: 10%; left: -3.5% !important"
-    />
+    <Handle v-if="props.editor === false" :id="id + 'comment'" class="handle" type="target" :position="Position.Left"
+      style="top: 10%; left: -3.5% !important" />
     <!-- Handle for registering comments -->
 
     <!-- Adding image viewer -->
     <div class="input-header">Waiting for User Input</div>
-    <textarea
-      type="text"
-      ref="textarea"
-      v-model="localItems.description"
-      placeholder="Description"
-      @input="resizeTextarea"
-    ></textarea>
+    <textarea type="text" ref="textarea" v-model="localItems.description" placeholder="Description"
+      @input="resizeTextarea"></textarea>
     <!-- Adding image viewer -->
 
     <!-- Button Poped to request delete element -->
-    <div
-      class="button-container"
-      :class="{ transparent: transparent }"
-      style="position: absolute; top: 50%; right: -2.2rem"
-      @click="deleteElement(id)"
-    >
+    <div class="button-container" :class="{ transparent: transparent }"
+      style="position: absolute; top: 50%; right: -2.2rem" @click="deleteElement(id)">
       <TrashIcon />
     </div>
     <!-- Button Poped to request delete element -->
@@ -100,9 +81,11 @@ const props = defineProps({
 [contenteditable]:focus {
   outline: none;
 }
+
 .input-header {
   font-weight: bold;
 }
+
 textarea {
   width: 90%;
   margin-top: 0.2rem;
@@ -111,6 +94,7 @@ textarea {
   border-radius: 1rem;
   border: 3px rgba(113, 113, 113, 0.531) dashed;
 }
+
 .handle {
   background-color: white;
   width: 1rem;

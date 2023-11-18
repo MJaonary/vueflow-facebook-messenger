@@ -1,8 +1,8 @@
 <script setup>
 import { computed, ref, watch } from "vue";
-import { useVueFlow } from '@vue-flow/core'
+import { useVueFlow } from '@vue-flow/core';
 
-// Icons
+// Importing SVG icons
 import TrashIcon from "../assets/svg/TrashIcon.svg";
 import GearIcon from "../assets/svg/GearIcon.svg";
 import Check2All from "../assets/svg/check2-all.svg";
@@ -82,7 +82,7 @@ const hanldeContainer = (e) => {
 };
 ////////////////////////////////////////////.
 
-// Local Variables and props related things.
+// Local variables and props declaration.
 const menu = ref(true);
 const containers = ref(null);
 const parent = ref(null);

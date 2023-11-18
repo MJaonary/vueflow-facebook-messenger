@@ -41,7 +41,7 @@ const localItems = computed(() => {
 });
 ////////////////////////////////////////////.
 
-// Local Variables and props related things.
+// Local variables and props declaration.
 const props = defineProps({
   id: String,
   editor: { type: Boolean, default: false },

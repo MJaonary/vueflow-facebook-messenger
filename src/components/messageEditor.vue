@@ -5,7 +5,7 @@ import messageRendererVue from "./messageRenderer.vue";
 // Simple Id Generator for basic Usage.
 import getId from "../utils/radomId";
 
-// Icons
+// Importing SVG icons
 import CardText from "../assets/svg/CardText.svg";
 import CardImage from "../assets/svg/CardImage.svg";
 import CardIcon from "../assets/svg/CardIcon.svg";
@@ -138,7 +138,7 @@ const addElement = (type) => {
 };
 ////////////////////////////////////////////.
 
-// Local Variables and props related things.
+// Local variables and props declaration.
 const props = defineProps({
   id: String,
 });

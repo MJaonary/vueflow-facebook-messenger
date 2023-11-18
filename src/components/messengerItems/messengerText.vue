@@ -2,20 +2,31 @@
 import { ref, computed, onMounted } from "vue";
 import { Handle, Position } from "@vue-flow/core";
 
-// Simple Id Generator for basic Usage.
+// Importing Store Pinia
+import { useStore } from "../../stores/main.js";
+
+// Simple Id Generator for basic Usage
 import getId from "../../utils/radomId";
 
-// Icons
+// Importing SVG icons
 import TrashIcon from "../../assets/svg/TrashIcon.svg";
 
 // Drag and Drop Functionality
 import { Draggable } from "vue3-smooth-dnd";
 
+// Local variables and props declaration
+const transparent = ref(true);
+const props = defineProps({
+  mid: String,
+  id: String,
+  editor: Boolean,
+});
+////////////////////////////////////////////.
+
 // Usage of Store Pinia
-import { useStore } from "../../stores/main.js";
 const store = useStore();
 
-// Computed Values from Store.
+// Computed Values from Store
 let localStates = computed(() => {
   return store.getMessageById(props.mid);
 });
@@ -33,7 +44,7 @@ let localButtons = computed(() => {
 });
 ////////////////////////////////////////////.
 
-// Value Update related methods all wrapped here
+// Value update related methods are defined here
 const updateValues = (event, button_id) => {
   switch (event.target.id) {
     case button_id + "button":
@@ -47,13 +58,13 @@ const updateValues = (event, button_id) => {
 };
 ////////////////////////////////////////////.
 
-// Elements related methods.
+// Elements related methods
 const deleteElement = (id) => {
   localStates.value.items = Items.value.filter((element) => element.id != id);
 };
 ////////////////////////////////////////////.
 
-// Buttons related methods.
+// Buttons related methods
 const deleteButton = (id) => {
   localItems.value.buttons = localButtons.value.filter(
     (element) => element.id != id
@@ -80,15 +91,6 @@ onMounted(() => {
   textarea.value.style.height = textarea.value.scrollHeight + 4 + "px";
 });
 ////////////////////////////////////////////.
-
-// Local Variables and props related things.
-const transparent = ref(true);
-const props = defineProps({
-  mid: String,
-  id: String,
-  editor: Boolean,
-});
-////////////////////////////////////////////.
 </script>
 
 <template>
@@ -105,7 +107,7 @@ const props = defineProps({
       v-if="props.editor === false"
       :id="id + 'comment'"
       class="handle"
-      type="input"
+      type="target"
       :position="Position.Left"
       style="top: 10%; left: -3.5%"
     />
@@ -156,7 +158,7 @@ const props = defineProps({
         <Handle
           :id="button.id + 'right'"
           class="handle"
-          type="outupt"
+          type="source"
           :position="Position.Right"
           style="top: 1.4rem; left: 100% !important"
         />

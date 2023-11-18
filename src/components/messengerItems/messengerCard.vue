@@ -1,18 +1,29 @@
 <script setup>
 import { ref, computed, onMounted } from "vue";
-import { Handle, Position, useVueFlow } from "@vue-flow/core";
+import { Handle, Position } from "@vue-flow/core";
+
+// Importing Store Pinia
+import { useStore } from "../../stores/main.js";
 
 // Simple Id Generator for basic Usage.
 import getId from "../../utils/radomId";
 
-// Icons
+// Importing SVG icons
 import TrashIcon from "../../assets/svg/TrashIcon.svg";
 
 // Drag and Drop Functionality
 import { Draggable } from "vue3-smooth-dnd";
 
+// Local variables and props declaration.
+const transparent = ref(true);
+const props = defineProps({
+  mid: String,
+  id: String,
+  editor: Boolean,
+});
+////////////////////////////////////////////.
+
 // Usage of Store Pinia
-import { useStore } from "../../stores/main.js";
 const store = useStore();
 
 // Computed Values from Store.
@@ -41,7 +52,7 @@ const default_image_src_value = computed(() => {
 });
 ////////////////////////////////////////////.
 
-// Value Update related methods all wrapped here
+// Value update related methods are defined here.
 const updateValues = (event, button_id) => {
   switch (event.target.id) {
     case props.id + "title":
@@ -111,22 +122,13 @@ const deleteDefaultAction = (id) => {
 // Renderless resizable textarea
 const textarea = ref(null); // Access the textarea by his ref.
 
-const resizeTextarea = (event) => {
-  event.target.style.height = "auto";
-  event.target.style.height = event.target.scrollHeight + 4 + "px";
+const resizeTextarea = ($event) => {
+  $event.target.style.height = "auto";
+  $event.target.style.height = $event.target.scrollHeight + 4 + "px";
 };
 
 onMounted(() => {
   textarea.value.style.height = textarea.value.scrollHeight + 4 + "px";
-});
-////////////////////////////////////////////.
-
-// Local Variables and props related things.
-const transparent = ref(true);
-const props = defineProps({
-  mid: String,
-  id: String,
-  editor: Boolean,
 });
 ////////////////////////////////////////////.
 </script>
@@ -158,7 +160,7 @@ const props = defineProps({
         v-if="props.editor === false"
         :id="id + 'comment'"
         class="handle"
-        type="input"
+        type="target"
         :position="Position.Left"
         style="top: 10%; left: -3.5% !important"
       />
@@ -169,7 +171,7 @@ const props = defineProps({
         v-if="props.editor === false"
         :id="id + 'right'"
         class="handle"
-        type="input"
+        type="source"
         :position="Position.Right"
         style="top: 10%; left: 98% !important"
       />
@@ -235,7 +237,7 @@ const props = defineProps({
           v-if="props.editor === false"
           :id="button.id + 'right'"
           class="handle"
-          type="input"
+          type="source"
           :position="Position.Right"
           style="top: 1.4rem; left: 100% !important"
         />
@@ -279,7 +281,7 @@ const props = defineProps({
           v-if="props.editor === false"
           :id="button.id + 'right'"
           class="handle"
-          type="input"
+          type="source"
           :position="Position.Right"
           style="top: 1.4rem; left: 100% !important"
         />

@@ -1,19 +1,30 @@
 <script setup>
 import { ref, computed } from "vue";
-import { Handle, Position, useVueFlow } from "@vue-flow/core";
+import { Handle, Position } from "@vue-flow/core";
 
-// Icons
+// Importing Store Pinia
+import { useStore } from "../../stores/main.js";
+
+// Importing SVG icons
 import TrashIcon from "../../assets/svg/TrashIcon.svg";
 import FileEarMark from "../../assets/svg/FileEarMark.svg";
 
 // Drag and Drop Functionality
 import { Draggable } from "vue3-smooth-dnd";
 
+// Local variables and props declaration
+const transparent = ref(true);
+const props = defineProps({
+  mid: String,
+  id: String,
+  editor: Boolean,
+});
+////////////////////////////////////////////.
+
 // Usage of Store Pinia
-import { useStore } from "../../stores/main.js";
 const store = useStore();
 
-// Computed Values from Store.
+// Computed Values from Store
 let localStates = computed(() => {
   return store.getMessageById(props.mid);
 });
@@ -27,19 +38,10 @@ let localItems = computed(() => {
 });
 ////////////////////////////////////////////.
 
-// Elements related methods.
+// Elements related methods
 const deleteElement = (id) => {
   localStates.value.items = Items.value.filter((element) => element.id != id);
 };
-////////////////////////////////////////////.
-
-// Local Variables and props related things.
-const transparent = ref(true);
-const props = defineProps({
-  mid: String,
-  id: String,
-  editor: Boolean,
-});
 ////////////////////////////////////////////.
 </script>
 
@@ -57,7 +59,7 @@ const props = defineProps({
       v-if="props.editor === false"
       :id="id + 'comment'"
       class="handle"
-      type="input"
+      type="target"
       :position="Position.Left"
       style="top: 10%; left: -3.5% !important"
     />

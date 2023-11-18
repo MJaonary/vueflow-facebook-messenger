@@ -2,21 +2,32 @@
 import { ref, computed, watch } from "vue";
 import { Handle, Position } from "@vue-flow/core";
 
-// Simple Id Generator for basic Usage.
+// Importing Store Pinia
+import { useStore } from "../stores/main.js";
+
+// Simple Id Generator for basic Usage
 import getId from "../utils/radomId.js";
 
-// custom Top Menu import
+// Custom Top Menu import
 import topMenu from "./topMenu.vue";
 
-// Icons
+// Importing SVG icons
 import TrashIcon from "../assets/svg/TrashIcon.svg";
 import PlayIcon from "../assets/svg/PlayIcon.svg";
 
+// Local variables and props declaration
+const transparent = ref(true);
+let selectedColor = ref(false);
+const props = defineProps({
+  id: String,
+  selected: Boolean,
+});
+////////////////////////////////////////////.
+
 // Usage of Store Pinia
-import { useStore } from "../stores/main.js";
 const store = useStore();
 
-// Computed Values from Store.
+// Computed Values from Store
 let localStates = computed(() => {
   return store.getMessageById(props.id);
 });
@@ -26,7 +37,7 @@ let localItems = computed(() => {
 });
 ////////////////////////////////////////////.
 
-// Items related methods.
+// Items related methods
 const deleteItemId = (id) => {
   localStates.value.items = localItems.value.filter((element) => {
     return element.id != id;
@@ -38,7 +49,7 @@ const addItem = () => {
 };
 ////////////////////////////////////////////.
 
-// Value Update related methods all wrapped here
+// Value update related methods are defined here
 const updateValues = (event, id) => {
   switch (event.target.id) {
     case props.id + "type":
@@ -53,34 +64,25 @@ const updateValues = (event, id) => {
 };
 ////////////////////////////////////////////.
 
-// Watching Selected Manual event.
+// Watching Selected Manual event
 watch(
   () => props.selected,
   (isSelected) => (selectedColor.value = isSelected)
 );
-////////////////////////////////////////////.
-
-// Local Variables and props related things.
-const transparent = ref(true);
-let selectedColor = ref(false);
-const props = defineProps({
-  id: String,
-  selected: Boolean,
-});
 ////////////////////////////////////////////.
 </script>
 
 <template>
   <Handle
     :id="id + 'right'"
-    type="input"
+    type="target"
     class="handle"
     :position="Position.Right"
   />
   <Handle
     :id="id + 'bottom'"
     class="handle"
-    type="input"
+    type="source"
     :position="Position.Bottom"
     style="top: 100%; left: 50% !important"
   />
@@ -155,7 +157,7 @@ const props = defineProps({
           <Handle
             :id="item.id + 'right'"
             class="handle"
-            type="input"
+            type="source"
             :position="Position.Right"
             style="top: 1.4rem; left: 100% !important"
           />
